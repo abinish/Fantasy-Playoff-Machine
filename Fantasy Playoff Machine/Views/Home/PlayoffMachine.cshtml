@@ -1,0 +1,57 @@
+﻿@model Fantasy_Playoff_Machine.Models.EspnLeague
+
+<script language="JavaScript">
+    window.__preloadedData.League = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+</script>
+
+<div ng-controller="PlayoffMachineController" ng-cloak>
+	<!--Divisions-->
+	<div>
+		<table  class="table">
+			<tr>
+				<td ng-repeat="division in league.LeagueSettings.Divisions"> 
+					<h2>{{division.Name}}</h2>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Team Name</th>
+								<th>Wins</th>
+								<th>Losses</th>
+								<th>Ties</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-class="getTeamClass(team)" ng-repeat="team in division.Teams | orderBy:dynamicStandings">
+								<td>{{team.TeamName}}</td>
+								<td>{{team.Wins}}</td>
+								<td>{{team.Losses}}</td>
+								<td>{{team.Ties}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<!--Remaining Weeks-->
+	<div>
+		<ul class="nav nav-tabs">
+			<li class="" ng-repeat="week in league.RemainingSchedule" ng-class="{active: $index == 0}"><a href="#{{week.Week}}" data-toggle="tab" aria-expanded="true">Week {{week.Week}}</a></li>
+		</ul>
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade" id="{{week.Week}}" ng-class="{'active in': $index == 0}" ng-repeat="week in league.RemainingSchedule">
+				<table class="table">
+					<tbody>
+						<tr ng-repeat="matchup in week.Matchups">
+							<td><a class="btn " style="width:100%; display:block; text-align:center" ng-class="getAwayTeamClass(matchup)" ng-click="setMatchup(matchup, true, false, false)">{{matchup.AwayTeamName}}</a></td>
+							<td><a class="btn" style="width:100%; display:block; text-align:center" ng-class="getTieClass(matchup)" ng-click="setMatchup(matchup, false, true, false)">Tie</a></td>
+							<td><a class="btn" style="width:100%; display:block; text-align:center" ng-class="getHomeTeamClass(matchup)" ng-click="setMatchup(matchup, false, false, true)">{{matchup.HomeTeamName}}</a></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+
+
+</div>
