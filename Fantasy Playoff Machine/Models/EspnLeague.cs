@@ -11,6 +11,8 @@ namespace Fantasy_Playoff_Machine.Models
 		public EspnLeagueSettings LeagueSettings { get; set; }
 
 		public List<EspnWeek> RemainingSchedule { get; set; }
+
+		public List<EspnWeek> CompletedSchedule { get; set; }
 	
 	}
 }

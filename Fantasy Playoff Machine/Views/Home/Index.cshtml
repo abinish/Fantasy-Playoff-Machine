@@ -1,17 +1,38 @@
 ﻿<div ng-controller="IndexController" ng-cloak>
-	<form class="form-horizontal">
+
+	<br />
+	
+	<h2> MSOE Wrestlers League</h2>
+	<div>
+		<a href="PowerRankings?leagueId=975549">Power Rankings</a>
+	</div>
+	
+	<h2>Kennys League</h2>
+	<div>
+		<a href="PowerRankings?leagueId=1087440">Power Rankings</a>
+	</div>
+	
+	<h2>The Keeper League</h2>
+	<div>
+		<a href="PowerRankings?leagueId=1241838">Power Rankings</a>
+	</div>
+	
+	<br/>
+	<br />
+	<br />
+	<br />
+
+	<h2>Choose another league:</h2>
+	<form class="form-horizontal" style="padding-left: 2%;">
 		<fieldset>
 			<div class="form-group">
-				<label for="inputEmail" class="col-lg-2 control-label">ESPN League ID</label>
+				<label for="inputEmail" class="col-lg-10 control-label">ESPN League ID</label>
 				<div class="col-lg-10">
 					<input type="number" class="form-control" id="leagueID" ng-model="leagueID">
-				</div>
-			</div>
-		   <div class="form-group">
-				<div class="col-lg-10 col-lg-offset-2">
-					 <button ng-click="submit()" class="btn btn-primary">Submit</button>
+					<button ng-click="submit()" class="btn btn-primary">Submit</button>
 				</div>
 			</div>
 		</fieldset>
 	</form>
+	
 </div>

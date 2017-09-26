@@ -1,0 +1,31 @@
+﻿@model Fantasy_Playoff_Machine.Models.EspnLeague
+
+<script language="JavaScript">
+    window.__preloadedData.League = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+</script>
+
+<div ng-controller="PowerRankingsController" ng-cloak>
+	<!--Divisions-->
+	<div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Team Name</th>
+					<th>Power Ranking Score</th>
+					<th>Wins</th>
+					<th>Losses</th>
+					<th>Ties</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-class="getTeamClass(team)" ng-repeat="team in teams | orderBy:dynamicStandings : true">
+					<td>{{team.Name}}</td>
+					<td>{{team.PowerRankingsScore}}</td>
+					<td>{{team.Wins}}</td>
+					<td>{{team.Losses}}</td>
+					<td>{{team.Ties}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

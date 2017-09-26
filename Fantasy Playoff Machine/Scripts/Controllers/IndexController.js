@@ -4,7 +4,7 @@
 			$scope.leagueID = 0;
 
 			$scope.submit = function () {
-				$window.open("/Home/PlayoffMachine?leagueId=" + $scope.leagueID, "_self");
+				$window.open("/Home/PowerRankings?leagueId=" + $scope.leagueID, "_self");
 			}
 		}
 	]
