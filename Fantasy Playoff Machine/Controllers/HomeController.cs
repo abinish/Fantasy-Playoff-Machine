@@ -25,7 +25,12 @@ namespace Fantasy_Playoff_Machine.Controllers
             return View();
         }
 
-        public ActionResult PlayoffMachine(int leagueId)
+		public ActionResult Multicast()
+		{
+			return View();
+		}
+
+		public ActionResult PlayoffMachine(int leagueId)
         {
 			return View(GetLeagueData(leagueId));
         }
