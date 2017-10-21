@@ -64,7 +64,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 			finalSettings.LeagueFormatTypeId = leagueSettings.leagueFormatTypeId;
 			finalSettings.LeagueStatusTypeId = leagueSettings.leagueStatusTypeId;
 			finalSettings.PlayoffTeams = leagueSettings.playoffTeamCount;
-			finalSettings.PlayoffTiebreakerID = leagueSettings.playoffTieRuleRawStatId;
+			finalSettings.PlayoffTiebreakerID = leagueSettings.playoffTieRule;
 			finalSettings.RegularSeasonWeeks = leagueSettings.regularSeasonMatchupPeriodCount;
 			finalSettings.RegularTiebreakerID = leagueSettings.playoffSeedingTieRuleRawStatId;
 			finalSettings.TieRule = leagueSettings.tieRule;
@@ -126,6 +126,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 					else //The week is completed 
 					{
 						var week = matchup.matchupPeriodId;
+
 						//Check if the schedule knows about this week yet, if not add it
 						if (!completedSchedule.Any(_ => _.Week == week.Value))
 						{
@@ -137,6 +138,19 @@ namespace Fantasy_Playoff_Machine.Controllers
 						var awayTeam = matchup.matchups[0].awayTeam.teamLocation + " " + matchup.matchups[0].awayTeam.teamNickname;
 						var homeTeam = matchup.matchups[0].homeTeam.teamLocation + " " + matchup.matchups[0].homeTeam.teamNickname;
 
+						//Add the score for the game to the current team
+						if (espnTeam.TeamName == awayTeam.Value)
+						{
+							//Away team
+							espnTeam.PointsFor += (decimal)matchup.matchups[0].awayTeamScores[0];
+							espnTeam.PointsAgainst += (decimal)matchup.matchups[0].homeTeamScores[0];
+						}
+						else
+						{
+							//Home team
+							espnTeam.PointsFor += (decimal)matchup.matchups[0].homeTeamScores[0];
+							espnTeam.PointsAgainst += (decimal)matchup.matchups[0].awayTeamScores[0];
+						}
 						//Check if the week knows about this matchup already, if not add it
 						if (!scheduledWeek.Matchups.Any(_ => _.AwayTeamName == awayTeam.Value && _.HomeTeamName == homeTeam.Value))
 						{
