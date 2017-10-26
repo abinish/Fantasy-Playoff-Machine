@@ -1,51 +1,48 @@
 ﻿<div ng-controller="IndexController" ng-cloak>
-
-	<br />
-	
-	<h2> MSOE Wrestlers League</h2>
-	<div>
-		<a href="Home/PowerRankings?leagueId=975549">Power Rankings</a>
-		<br />
-		<a href="Home/PlayoffMachine?leagueId=975549">Playoff Machine</a>
-	</div>
-	
-	<h2>Kennys League</h2>
-	<div>
-		<a href="Home/PowerRankings?leagueId=1087440">Power Rankings</a>
-		<br />
-		<a href="Home/PlayoffMachine?leagueId=1087440">Playoff Machine</a>
-	</div>
-	
-	<h2>The Keeper League</h2>
-	<div>
-		<a href="Home/PowerRankings?leagueId=1241838">Power Rankings</a>
-		<br/>
-		<a href="Home/PlayoffMachine?leagueId=1241838">Playoff Machine</a>
-	</div>
-	
 	<br/>
-	<br />
-	<br />
-	<br />
+	<div ng-show="leagues.length === 0">
+		<button ng-click="demo()" class="btn btn-primary">Try a demo</button>
 
-	<h2>Choose another league:</h2>
-	<form class="form-horizontal" style="padding-left: 2%;">
-		<fieldset>
-			<div class="form-group">
-				<label for="inputEmail" class="col-lg-10 control-label">ESPN League ID</label>
-				<div class="col-lg-10">
-					<input type="number" class="form-control" id="leagueID" ng-model="leagueID">
-					<button ng-click="submit()" class="btn btn-primary">Submit</button>
-				</div>
-			</div>
-		</fieldset>
-	</form>
-	
-	<br />
-	<br />
-	<br />
-	<h2>Multicast</h2>
-	<div>
-		<a href="Home/Multicast">Multicast</a>
+		<h2>or Setup your profile:</h2>
+
+		<div>
+			<select ng-model="selectedSite" ng-options="site for site in supportedSites" ng-init="selectedSite= supportedSites[0]"></select>
+
+			@*<input placeholder="Fantasy League URL" type="text"/>
+			<span> or </span>*@
+			<input placeholder="League ID" type="number" ng-model="leagueIDToAdd" style="font-size:14px"/>
+			<input placeholder="Name of the league" type="text" ng-model="leagueNameToAdd" />
+
+
+			<button class="btn btn-success" ng-click="addLeague()" ng-disabled="addDisabled()">Add</button>
+		</div>
 	</div>
+
+	<div ng-show="leagues.length !== 0">
+		<div ng-repeat="league in leagues">
+			<h2>{{league.Name}}<i class="fa fa-trash" aria-hidden="true" style="padding-left:5px; cursor: pointer" ng-click="removeLeague(league)"></i></h2>
+			<div ng-show="!league.PrivateLeague || !league.FailedToLoad ">
+				<a href="Home/PowerRankings?leagueId={{league.ID}}" ng-show="!league.PrivateLeague">Power Rankings</a>
+				<a href="Home/PowerRankingsFromData?data={{league.PrivateLeagueData}}" ng-show="league.PrivateLeague">Power Rankings</a>
+				<br />
+				<a href="Home/PlayoffMachine?leagueId={{league.ID}}" ng-show="!league.PrivateLeague">Playoff Machine</a>
+				<a href="Home/PlayoffMachineFromData?data={{league.PrivateLeagueData}}" ng-show="league.PrivateLeague">Playoff Machine</a>
+			</div>
+			<br/>
+		</div>
+
+		<h2>Add another league</h2>
+		<div>
+			<select ng-model="selectedSite" ng-options="site for site in supportedSites" ng-init="selectedSite= supportedSites[0]"></select>
+
+			@*<input placeholder="Fantasy League URL" type="text"/>
+			<span> or </span>*@
+			<input placeholder="League ID" type="number" ng-model="leagueIDToAdd" />
+			<input placeholder="Name of the league" type="text" ng-model="leagueNameToAdd" />
+
+
+			<button class="btn btn-success" ng-click="addLeague()" ng-disabled="addDisabled()">Add</button>
+		</div>
+	</div>
+
 </div>

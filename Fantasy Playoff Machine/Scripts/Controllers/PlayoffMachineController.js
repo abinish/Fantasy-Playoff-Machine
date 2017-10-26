@@ -58,6 +58,7 @@
 				}
 				_.each($scope.teams, function (team) {
 					team.WinPercentage = (team.Wins + (0.5) * team.Ties) / (team.Wins + team.Ties + team.Losses);
+					team.Tiebreakers = [];
 					unrankedTeams.push(team);
 				});
 				
@@ -143,6 +144,14 @@
 			}
 
 			$scope.determineTieBreakersWinner = function (teams) {
+				var losersTieBreaker = {
+					Teams: teams.map(_ => _.TeamName),
+					Messages: []
+				};
+				var winnersTieBreaker = {
+					Teams: teams.map(_ => _.TeamName),
+					Messages: []
+				};
 
 				if ($scope.league.LeagueSettings.PlayoffTiebreakerID == 0) { //Head to head
 					var winner = $scope.headToHeadTiebreaker(teams);
@@ -224,7 +233,7 @@
 				return teams.shift();
 			};
 
-			$scope.headToHeadTiebreaker = function (teams) {
+			$scope.headToHeadTiebreaker = function (teams, winnersTiebreaker, losersTiebreaker) {
 				var headToHeadTeams = [];
 
 				for (var i = 0; i < teams.length; i++) {
@@ -287,7 +296,7 @@
 				return bestRecordTeam.Team;
 			};
 
-			$scope.pointsForTiebreaker = function (teams) {
+			$scope.pointsForTiebreaker = function (teams, winnersTiebreaker, losersTiebreaker) {
 				var maxTeamPoint = _.max(teams, function (team) {
 					return team.PointsFor;
 				});
@@ -302,7 +311,7 @@
 				return undefined;
 			};
 
-			$scope.pointsAgainstTiebreaker = function (teams) {
+			$scope.pointsAgainstTiebreaker = function (teams, winnersTiebreaker, losersTiebreaker) {
 				var maxTeamPoint = _.max(teams, function (team) {
 					return team.PointsAgainst;
 				});
@@ -317,7 +326,7 @@
 				return undefined;
 			};
 
-			$scope.intraDivisionRecord = function (teams) {
+			$scope.intraDivisionRecord = function (teams, winnersTiebreaker, losersTiebreaker) {
 				return teams.shift();
 				//Return team that won, if tie then undefined
 			};

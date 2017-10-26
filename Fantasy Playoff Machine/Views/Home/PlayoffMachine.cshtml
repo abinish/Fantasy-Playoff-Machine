@@ -22,7 +22,7 @@
 						</thead>
 						<tbody>
 							<tr ng-class="getTeamClass(team)" ng-repeat="team in division.Teams | orderBy:dynamicStandings">
-								<td>{{team.TeamName}}</td>
+								<td>{{team.TeamName}}@*<i class="fa fa-black-tie" aria-hidden="true" ng-show="team.InvolvedInTiebreaker" style="padding-left:5px"></i></td>*@
 								<td>{{team.Wins}}</td>
 								<td>{{team.Losses}}</td>
 								<td>{{team.Ties}}</td>

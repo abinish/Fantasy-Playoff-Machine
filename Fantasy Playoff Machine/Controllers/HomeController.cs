@@ -25,6 +25,11 @@ namespace Fantasy_Playoff_Machine.Controllers
             return View();
         }
 
+		public ActionResult Demo()
+		{
+			return View();
+		}
+
 		public ActionResult Multicast()
 		{
 			return View();
@@ -32,23 +37,61 @@ namespace Fantasy_Playoff_Machine.Controllers
 
 		public ActionResult PlayoffMachine(int leagueId)
         {
-			return View(GetLeagueData(leagueId));
+			return View(GetLeagueData(ExecuteESPNRequest(leagueId)));
         }
+
+		public ActionResult PlayoffMachineFromData(string data)
+		{
+			return View("PlayoffMachine", GetLeagueData(data));
+		}
 
 	    public ActionResult PowerRankings(int leagueId)
 	    {
-		    return View(GetLeagueData(leagueId));
+		    return View(GetLeagueData(ExecuteESPNRequest(leagueId)));
 	    }
 
-	    public EspnLeague GetLeagueData(int leagueId)
-	    {
+		public ActionResult PowerRankingsFromData(string data)
+		{
+			return View("PowerRankings", GetLeagueData(data));
+		}
+
+		public ActionResult VerifyLeagueExists(string site, int leagueId)
+		{
+			if (site.ToLowerInvariant().Equals("yahoo"))
+			{
+				if (!string.IsNullOrEmpty(ExecuteYahooRequest(leagueId)))
+					return Json(true, JsonRequestBehavior.AllowGet);
+
+			}
+			else if (site.ToLowerInvariant().Equals("espn"))
+			{
+				var result = ExecuteESPNRequest(leagueId);
+				var dynamicResult = JsonConvert.DeserializeObject<dynamic>(result);
+				if (dynamicResult.error == null)
+					return Json(true, JsonRequestBehavior.AllowGet);
+			}
+
+			return Json(false, JsonRequestBehavior.AllowGet);
+		}
+
+		private string ExecuteYahooRequest(int leagueId)
+		{
+			return "";
+		}
+
+		private string ExecuteESPNRequest(int leagueId)
+		{
 			var client = new RestClient("http://games.espn.com");
-		    var request = new RestRequest("ffl/api/v2/leagueSettings", Method.GET);
-		    request.AddParameter("leagueId", leagueId);
-		    request.AddParameter("seasonId", GetEspnSeasonId());
+			var request = new RestRequest("ffl/api/v2/leagueSettings", Method.GET);
+			request.AddParameter("leagueId", leagueId);
+			request.AddParameter("seasonId", GetEspnSeasonId());
 
-		    var queryResult = client.Execute(request).Content;
+			var result = client.Execute(request).Content;
+			return result;
+		}
 
+	    public EspnLeague GetLeagueData(string queryResult)
+	    {
 		    var result = JsonConvert.DeserializeObject<dynamic>(queryResult);
 
 		    var league = CreateLeagueObject(result);

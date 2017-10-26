@@ -8,7 +8,7 @@ namespace Fantasy_Playoff_Machine
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/FFHub.css").Include("~/Content/site.css").Include("~/Content/TELS_logo.png").Include("~/Content/Glyphicons.css"));
+            bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/FFHub.css").Include("~/Content/site.css"));
 
             bundles.Add(new ScriptBundle("~/bundles/jquery")
                     .Include("~/Scripts/bootstrap.js")

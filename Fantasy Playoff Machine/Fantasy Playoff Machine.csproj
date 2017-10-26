@@ -18,7 +18,7 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
-    <IISExpressSSLPort />
+    <IISExpressSSLPort>44313</IISExpressSSLPort>
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
@@ -141,6 +141,8 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\FFHub.css" />
+    <Content Include="Content\FullUrl.PNG" />
+    <Content Include="Content\LeagueID.PNG" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -151,6 +153,7 @@
     <Content Include="Scripts\Controllers\PowerRankingsController.js" />
     <Content Include="Scripts\Controllers\PlayoffMachineController.js" />
     <Content Include="Scripts\Controllers\IndexController.js" />
+    <Content Include="Scripts\Services\OverlayService.js" />
     <Content Include="Scripts\Services\PreloadService.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
@@ -179,6 +182,9 @@
     <None Include="Project_Readme.html" />
     <Content Include="Views\Home\PowerRankings.cshtml" />
     <Content Include="Views\Home\Multicast.cshtml" />
+    <Content Include="Views\Home\Demo.cshtml" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\DEV-TheFFHub - Web Deploy.pubxml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

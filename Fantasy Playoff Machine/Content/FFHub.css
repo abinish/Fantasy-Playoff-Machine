@@ -5068,13 +5068,7 @@ h5, h6, p {
 	}
 }
 
-@font-face {
-	font-family: 'FontAwesome';
-	src: url('../glyphs/font-awesome/fontawesome-webfont.eot?v=4.2.0');
-	src: url('../glyphs/font-awesome/fontawesome-webfont.eot?#iefix&v=4.2.0') format('embedded-opentype'),url('../glyphs/font-awesome/fontawesome-webfont.woff?v=4.2.0') format('woff'),url('../glyphs/font-awesome/fontawesome-webfont.ttf?v=4.2.0') format('truetype'),url('../glyphs/font-awesome/fontawesome-webfont.svg?v=4.2.0#fontawesomeregular') format('svg');
-	font-weight: 400;
-	font-style: normal
-}
+
 
 .fa {
 	display: inline-block;
