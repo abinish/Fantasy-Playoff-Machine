@@ -45,6 +45,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.Core.3.3.18.2\lib\net45\AWSSDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="AWSSDK.DynamoDBv2, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.DynamoDBv2.3.3.4.19\lib\net45\AWSSDK.DynamoDBv2.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -125,24 +131,31 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Logic\DatabaseLogic.cs" />
+    <Compile Include="Logic\EspnLeagueLogic.cs" />
+    <Compile Include="Logic\YahooLeagueLogic.cs" />
     <Compile Include="Models\EspnDivision.cs" />
     <Compile Include="Models\EspnLeague.cs" />
     <Compile Include="Models\EspnLeagueSettings.cs" />
     <Compile Include="Models\EspnMatchupItem.cs" />
     <Compile Include="Models\EspnWeek.cs" />
     <Compile Include="Models\EspnTeam.cs" />
+    <Compile Include="Models\OAuthLeagueAddition.cs" />
+    <Compile Include="Models\OAuthState.cs" />
+    <Compile Include="Models\YahooCredentials.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\espnurl.PNG" />
     <Content Include="Content\FFHub.css" />
-    <Content Include="Content\FullUrl.PNG" />
-    <Content Include="Content\LeagueID.PNG" />
+    <Content Include="Content\yahooUrl.PNG" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -162,6 +175,7 @@
     </Content>
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
     </Content>
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
@@ -178,13 +192,21 @@
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Project_Readme.html" />
     <Content Include="Views\Home\PowerRankings.cshtml" />
     <Content Include="Views\Home\Multicast.cshtml" />
     <Content Include="Views\Home\Demo.cshtml" />
-    <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\CustomProfile.pubxml">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\PublishProfiles\DEV-TheFFHub - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\TheFFHub - Web Deploy.pubxml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.4.19\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

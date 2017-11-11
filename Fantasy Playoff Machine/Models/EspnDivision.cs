@@ -10,6 +10,8 @@ namespace Fantasy_Playoff_Machine.Models
 	{
 		public string Name { get; set; }
 
+		public int ID { get; set; }
+
 		public List<EspnTeam> Teams { get; set; }
 	}
 }

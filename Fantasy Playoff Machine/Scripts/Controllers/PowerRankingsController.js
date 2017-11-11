@@ -3,7 +3,9 @@
 		function ($scope, preloadService) {
 			$scope.league = angular.copy(preloadService.GetPreloadedData("League"));
 			$scope.teams = [];
-
+			$scope.totalPoints = 0;
+			$scope.totalGames = 0;
+			$scope.averagePoints = 0;
 
 			$scope.orderStandings = function () {
 				//Set overall rank on each team
@@ -39,6 +41,7 @@
 
 				return team;
 			}
+			
 
 			_.each($scope.league.CompletedSchedule,
 				function(week) {
@@ -48,19 +51,14 @@
 							var awayTeam = getTeam(matchup.AwayTeamName);
 							awayTeam.PointsFor += matchup.AwayTeamScore;
 							awayTeam.PointsAgainst += matchup.HomeTeamScore;
-							if (matchup.AwayTeamScore > 93)
-								awayTeam.ExpectedWins += 1;
-							else
-								awayTeam.ExpectedLosses += 1;
 
+							$scope.totalPoints += matchup.HomeTeamScore;
+							$scope.totalPoints += matchup.AwayTeamScore;
+							$scope.totalGames+= 2;
 
 							var homeTeam = getTeam(matchup.HomeTeamName);
 							homeTeam.PointsFor += matchup.HomeTeamScore;
 							homeTeam.PointsAgainst += matchup.AwayTeamScore;
-							if (matchup.HomeTeamScore > 93)
-								homeTeam.ExpectedWins += 1;
-							else
-								homeTeam.ExpectedLosses += 1;
 
 							if (matchup.AwayTeamWon) {
 								awayTeam.Wins += 1;
@@ -75,7 +73,29 @@
 						});
 				});
 
+			if ($scope.league.CompletedSchedule.length < 3) {
+				$scope.averagePoints = 93;
+			} else {
+				$scope.averagePoints = $scope.totalPoints / $scope.totalGames;
+			}
 
+			_.each($scope.league.CompletedSchedule,
+				function (week) {
+					_.each(week.Matchups,
+						function (matchup) {
+							var awayTeam = getTeam(matchup.AwayTeamName);
+							if (matchup.AwayTeamScore > $scope.averagePoints)
+								awayTeam.ExpectedWins += 1;
+							else
+								awayTeam.ExpectedLosses += 1;
+
+							var homeTeam = getTeam(matchup.HomeTeamName);
+							if (matchup.HomeTeamScore > $scope.averagePoints)
+								homeTeam.ExpectedWins += 1;
+							else
+								homeTeam.ExpectedLosses += 1;
+						});
+				});
 
 			$scope.orderStandings();
 		}

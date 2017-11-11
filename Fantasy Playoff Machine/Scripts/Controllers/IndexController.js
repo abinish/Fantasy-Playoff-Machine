@@ -1,18 +1,14 @@
 ﻿var app = angular.module("fantasyPlayoffMachine", ['ngCookies']).controller("IndexController",
-	["$scope", "PreloadService", "$window", "$sce", "OverlayService", "$cookies", "$http",
-		function ($scope, preloadService, $window, $sce, overlayService, $cookies, $http) {
-			$scope.leagueID = 0;
+	["$scope", "PreloadService", "$window", "$sce", "OverlayService", "$cookies", "$http", "$location",
+		function ($scope, preloadService, $window, $sce, overlayService, $cookies, $http, $location) {
 			$scope.leagues = [];
 			$scope.supportedSites = ["ESPN", "Yahoo"];
 			$scope.selectedSite;
 			$scope.leagueIDToAdd;
 			$scope.leagueNameToAdd;
-			$scope.leagueUrlToAdd;
-			$scope.leagueToAddPrivateLeague;
-			$scope.showFullUrlHelpImage;
-			$scope.fullUrlHelpImage;
-			$scope.showLeagueIDHelpImage;
-			$scope.leagueIDHelpImage;
+			$scope.yahooUserId;
+			$scope.showPrivateLeagueSettings = false;
+			$scope.privateLeagueDataToAdd = "";
 
 			$scope.demo = function () {
 				$window.open("/Home/Demo", "_self");
@@ -22,54 +18,40 @@
 				return !$scope.leagueIDToAdd && !$scope.leagueNameToAdd;
 			};
 
+			$scope.getImageUrl = function (selectedSite) {
+				if (selectedSite === "ESPN")
+					return "../Content/espnurl.PNG";
+
+				return "../Content/yahoourl.PNG";
+			}
+
+			$scope.showYahooAuthenticateButton = function () {
+				return $scope.selectedSite === "Yahoo" && !$scope.yahooUserId;
+			};
+
 			$scope.addLeague = function () {
 				//Make call to service to check if it works
-				return $http.get("Home/VerifyLeagueExists?site=" + $scope.selectedSite + "&leagueId=" + $scope.leagueIDToAdd)
+				$http.get("/Home/VerifyLeagueExists?site=" + $scope.selectedSite + "&leagueId=" + $scope.leagueIDToAdd + "&userId=" + $scope.yahooUserId)
 					.then(function (data) {
 
-						if (data.data) { 
+						if (data.data) {
 							$scope.addLeagueToCookieAndPage({
 								Name: $scope.leagueNameToAdd,
 								ID: $scope.leagueIDToAdd,
-								PrivateLeague: false,
-								PrivateLeagueData: "",
-								FailedToLoad: false
+								Site: $scope.selectedSite
 							});
 
 							$scope.leagueIDToAdd = undefined;
 							$scope.leagueNameToAdd = undefined;
-							$scope.leagueUrlToAdd = undefined;
-							$scope.leagueToAddPrivateLeague = false;
+							$scope.showPrivateLeagueSettings = false;
 						}
-						else {
-							$scope.tryAddPrivateLeague();
+						else if ($scope.selectedSite === "ESPN") {
+							//Show tips for doing private leagues
+							$scope.showPrivateLeagueSettings = true;
+							$scope.privateLeagueUri = "http://games.espn.com/ffl/api/v2/leagueSettings?leagueId=" + $scope.leagueIDToAdd + "&seasonId=" + getSeasonId();
+						} else {
+							alert("We could not properly load the league.  If you have questions, email support@theffhub.com");
 						}
-
-						
-					});
-			};
-
-			$scope.tryAddPrivateLeague = function () {
-
-				var tryAddLeague = function (data) {
-					if (!data.error) {
-						$scope.addLeagueToCookieAndPage({
-							Name: $scope.leagueNameToAdd,
-							ID: $scope.leagueIDToAdd,
-							PrivateLeague: true,
-							PrivateLeagueData: data,
-							FailedToLoad: false
-						});
-					}
-				}
-
-				//$scope.getPrivateLeagueData($scope.leagueIDToAdd, tryAddLeague);
-			};
-
-			$scope.getPrivateLeagueData = function (leagueID, callback) {
-				var data = $http.get("http://games.espn.com/ffl/api/v2/leagueSettings?leagueId=" + leagueID + "&seasonId=" + getSeasonId())
-					.then(function (data) {
-						callback(data);
 					});
 			};
 
@@ -80,31 +62,52 @@
 					if (index >= 0)
 						$scope.leagues.splice(index, 1);
 
-					$scope.saveCookie($scope.leagues);
+					$scope.saveCookie({
+						yahooUserId: $scope.yahooUserId,
+						leagues: $scope.leagues
+					});
 				}
-			}
+			};
 
-			$scope.saveCookie = function (leagues) {
+			$scope.saveCookie = function (data) {
 				var now = new $window.Date();
 				// this will set the expiration to 6 months
 				var exp = new $window.Date(now.getFullYear(), now.getMonth() + 6, now.getDate());
 
-				$cookies.putObject("leagues", leagues, {
-					expires: exp
+
+				var getDomain = function () {
+					if ($location.host().includes("dev-theffhub")){
+						return ".dev-theffhub.azurewebsites.net/"
+					}
+					return ".theffhub.com";
+				}
+				$cookies.putObject("data", data, {
+					expires: exp,
+					path: '/',
+					domain: getDomain()
 				});
-			}
+			};
 
 			$scope.addLeagueToCookieAndPage = function (leagueToAdd) {
-				var cookiesLeagues = $cookies.getObject("leagues");
+				var data = $cookies.getObject("data");
 
-				if (!cookiesLeagues)
-					cookiesLeagues = [];
-
-				cookiesLeagues.push(leagueToAdd);
-				$scope.saveCookie(cookiesLeagues);
+				if (!data) {
+					data = {
+						yahooUserId: '',
+						leagues: []
+					};
+				}
+				
+				data.leagues.push(leagueToAdd);
+				
+				$scope.saveCookie(data);
 
 				$scope.leagues.push(leagueToAdd);
 			};
+
+			$scope.generateLeagueDataUrl = function (league) {
+				return "http://games.espn.com/ffl/api/v2/leagueSettings?leagueId=" + league.ID + "&seasonId=" + getSeasonId();
+			}
 
 			var getSeasonId = function () {
 				var now = new Date();
@@ -126,33 +129,32 @@
 			};
 
 			var initializeLeaguesFromCookies = function () {
-				var cookiesLeagues = $cookies.getObject("leagues");
-
-				//Look through the leagues and update the data on any private ones
-				cookiesLeagues.forEach(function (league) {
-					if (league.PrivateLeague) {
-						$scope.getPrivateLeagueData(league.ID, function (data) {
-							if (data.error) {
-								league.FailedToLoad = true;
-							} else {
-								league.FailedToLoad = false;
-								league.PrivateLeagueData = data;
-							}
-						})
-					}
-				});
+				var data = $cookies.getObject("data");
 				
-				if(cookiesLeagues)
-					$scope.leagues = cookiesLeagues;
+				if (data) {
+					$scope.leagues = data.leagues;
+					$scope.yahooUserId = data.yahooUserId;
+				}
 			};
+
+			$scope.yahooLogin = function () {
+				$window.location = "Auth/YahooLogin";
+			};
+
+			var initializeFromPreloadedData = function () {
+				var yahooUserId = preloadService.GetPreloadedData("YahooUserGuid");
+				if (yahooUserId) {
+					$scope.yahooUserId = yahooUserId;
+					$scope.saveCookie({
+						yahooUserId: yahooUserId,
+						leagues: $scope.leagues
+					});
+				}
+			}
 
 			setupHelpImages();
 			initializeLeaguesFromCookies();
-
-			$http.get("http://games.espn.com/ffl/api/v2/leagueSettings?leagueId=2293930&seasonId=2017")
-				.then(function (data) {
-					console.log(data);
-				});
+			initializeFromPreloadedData();
 		}
 	]
 );

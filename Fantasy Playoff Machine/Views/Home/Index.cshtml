@@ -1,48 +1,100 @@
-﻿<div ng-controller="IndexController" ng-cloak>
+﻿<script language="JavaScript">
+	window.__preloadedData.YahooUserGuid = @Html.Raw("'" + ViewBag.YahooUserGuid + "'");
+</script>
+
+<div ng-controller="IndexController" ng-cloak>
 	<br/>
 	<div ng-show="leagues.length === 0">
 		<button ng-click="demo()" class="btn btn-primary">Try a demo</button>
 
 		<h2>or Setup your profile:</h2>
-
 		<div>
-			<select ng-model="selectedSite" ng-options="site for site in supportedSites" ng-init="selectedSite= supportedSites[0]"></select>
+			Select the site your league is on: <br/>
+			<select ng-model="selectedSite" ng-options="site for site in supportedSites" ng-init="selectedSite= supportedSites[0]"></select> <br/>
 
-			@*<input placeholder="Fantasy League URL" type="text"/>
-			<span> or </span>*@
-			<input placeholder="League ID" type="number" ng-model="leagueIDToAdd" style="font-size:14px"/>
-			<input placeholder="Name of the league" type="text" ng-model="leagueNameToAdd" />
-
-
-			<button class="btn btn-success" ng-click="addLeague()" ng-disabled="addDisabled()">Add</button>
+			<span ng-show="!showYahooAuthenticateButton()">
+				<span stlye="padding-top:100px">Grab the league ID from the URL of your league (see image below for more details):</span> <br/>
+				
+				<input placeholder="League ID" type="number" ng-model="leagueIDToAdd" /> <img ng-src="{{getImageUrl(selectedSite)}}" /><br/>
+				
+				<span style="margin-top: 100px;">Add a name to remember your league by: </span><br/>
+				<input placeholder="Name of the league" type="text" ng-model="leagueNameToAdd"/> <br/>
+				<button class="btn btn-success" ng-click="addLeague()" ng-disabled="addDisabled()" style="margin-top:10px">Add</button>
+			</span>
+			<span ng-show="showYahooAuthenticateButton()">
+				<br/><button class="btn btn-success" ng-click="yahooLogin()">Authenticate with Yahoo</button>
+			</span>
+			<div ng-show="showPrivateLeagueSettings">
+				We could not properly load your league.  This may be because it is a private league. <br/>
+				In order to view private leagues you will have to do the following steps: <br/>
+				1. Open <a href="http://espn.go.com">ESPN</a> in a web browser<br />
+				2. Go to the following URL: <a ng-href="{{privateLeagueUri}}">{{privateLeagueUri}}</a><br />
+				3. Copy what is returned into the textbox below:<br />
+				<textarea ng-model="privateLeagueDataToAdd" rows="10"></textarea><br />
+				<div ng-show="privateLeagueDataToAdd !== ''">
+					4. Select which screen you want to open:<br />
+					<form action="Home/PlayoffMachine" method="post" id="upperPM">
+						<input type="text" name="data" ng-model="privateLeagueDataToAdd" ng-show="false" />
+						<a onclick="document.forms['upperPM'].submit(); return false;" style="cursor: pointer">Playoff Machine</a>
+					</form>
+					<br />
+					<form action="Home/PowerRankings" method="post" id="upperPR">
+						<input type="text" name="data" ng-model="privateLeagueDataToAdd" ng-show="false" />
+						<a onclick="document.forms['upperPR'].submit(); return false;" style="cursor: pointer">Power Rankings</a>
+					</form>
+				</div>
+			</div>
 		</div>
 	</div>
 
 	<div ng-show="leagues.length !== 0">
 		<div ng-repeat="league in leagues">
 			<h2>{{league.Name}}<i class="fa fa-trash" aria-hidden="true" style="padding-left:5px; cursor: pointer" ng-click="removeLeague(league)"></i></h2>
-			<div ng-show="!league.PrivateLeague || !league.FailedToLoad ">
-				<a href="Home/PowerRankings?leagueId={{league.ID}}" ng-show="!league.PrivateLeague">Power Rankings</a>
-				<a href="Home/PowerRankingsFromData?data={{league.PrivateLeagueData}}" ng-show="league.PrivateLeague">Power Rankings</a>
+			<div>
+				<a href="Home/PowerRankings?site={{league.Site}}&leagueId={{league.ID}}&userId={{yahooUserId}}" ng-show="!league.PrivateLeague">Power Rankings</a>
 				<br />
-				<a href="Home/PlayoffMachine?leagueId={{league.ID}}" ng-show="!league.PrivateLeague">Playoff Machine</a>
-				<a href="Home/PlayoffMachineFromData?data={{league.PrivateLeagueData}}" ng-show="league.PrivateLeague">Playoff Machine</a>
+				<a href="Home/PlayoffMachine?site={{league.Site}}&leagueId={{league.ID}}&userId={{yahooUserId}}" ng-show="!league.PrivateLeague">Playoff Machine</a>
+				<br />
 			</div>
 			<br/>
 		</div>
 
 		<h2>Add another league</h2>
 		<div>
-			<select ng-model="selectedSite" ng-options="site for site in supportedSites" ng-init="selectedSite= supportedSites[0]"></select>
+			Select the site your league is on: <br />
+			<select ng-model="selectedSite" ng-options="site for site in supportedSites" ng-init="selectedSite= supportedSites[0]"></select> <br />
 
-			@*<input placeholder="Fantasy League URL" type="text"/>
-			<span> or </span>*@
-			<input placeholder="League ID" type="number" ng-model="leagueIDToAdd" />
-			<input placeholder="Name of the league" type="text" ng-model="leagueNameToAdd" />
+			<span ng-show="!showYahooAuthenticateButton()">
+				<span stlye="padding-top:100px">Grab the league ID from the URL of your league (see image below for more details):</span> <br />
 
+				<input placeholder="League ID" type="number" ng-model="leagueIDToAdd" /> <img ng-src="{{getImageUrl(selectedSite)}}" /><br />
 
-			<button class="btn btn-success" ng-click="addLeague()" ng-disabled="addDisabled()">Add</button>
+				<span style="margin-top: 100px;">Add a name to remember your league by: </span><br />
+				<input placeholder="Name of the league" type="text" ng-model="leagueNameToAdd" /> <br />
+				<button class="btn btn-success" ng-click="addLeague()" ng-disabled="addDisabled()" style="margin-top:10px">Add</button>
+			</span>
+			<span ng-show="showYahooAuthenticateButton()">
+				<button class="btn btn-success" ng-click="yahooLogin()">Authenticate with Yahoo</button>
+			</span>
+			<div ng-show="showPrivateLeagueSettings">
+				We could not properly load your league.  This may be because it is a private league. <br />
+				In order to view private leagues you will have to do the following steps: <br />
+				1. Open <a href="http://espn.go.com">ESPN</a> in a web browser<br />
+				2. Go to the following URL: <a ng-href="{{privateLeagueUri}}">{{privateLeagueUri}}</a><br />
+				3. Copy what is returned into the textbox below:<br />
+				<textarea ng-model="privateLeagueDataToAdd" rows="10"></textarea><br />
+				<div ng-show="privateLeagueDataToAdd !== ''">
+					4. Select which screen you want to open:<br />
+					<form action="Home/PlayoffMachine" method="post" id="lowerPM">
+						<input type="text" name="data" ng-model="privateLeagueDataToAdd" ng-show="false"/>
+						<a onclick="document.forms['lowerPM'].submit(); return false;" style="cursor: pointer">Playoff Machine</a>
+					</form>
+					<form action="Home/PowerRankings" method="post" id="lowerPR">
+						<input type="text" name="data" ng-model="privateLeagueDataToAdd" ng-show="false" />
+						<a onclick="document.forms['lowerPR'].submit(); return false;" style="cursor: pointer">Power Rankings</a>
+					</form>
+				</div>
+			</div>
 		</div>
 	</div>
-
 </div>

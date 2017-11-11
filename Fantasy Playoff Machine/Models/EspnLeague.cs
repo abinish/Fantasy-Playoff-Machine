@@ -1,8 +1,4 @@
-﻿using RestSharp.Deserializers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 
 namespace Fantasy_Playoff_Machine.Models
 {
@@ -13,6 +9,8 @@ namespace Fantasy_Playoff_Machine.Models
 		public List<EspnWeek> RemainingSchedule { get; set; }
 
 		public List<EspnWeek> CompletedSchedule { get; set; }
+
+		public string Site { get; set; }
 	
 	}
 }

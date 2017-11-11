@@ -18,6 +18,12 @@ namespace Fantasy_Playoff_Machine.Models
 
 		public int Ties { get; set; }
 
+		public int DivisionWins { get; set; }
+
+		public int DivisionLosses { get; set; }
+
+		public int DivisionTies { get; set; }
+
 		public decimal PointsFor { get; set; }
 
 		public decimal PointsAgainst { get; set; }
