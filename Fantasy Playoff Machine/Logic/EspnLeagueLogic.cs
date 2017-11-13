@@ -117,7 +117,7 @@ namespace Fantasy_Playoff_Machine.Logic
 
 						var homeTeamWin = matchup.matchups[0].outcome == 1;
 						var awayTeamWin = matchup.matchups[0].outcome == 2;
-						var tie = matchup.matchups[0].outcome == 0;
+						var tie = matchup.matchups[0].outcome == 3;
 
 						//Add the score for the game to the current team
 						if (espnTeam.TeamName == awayTeam.Value)
