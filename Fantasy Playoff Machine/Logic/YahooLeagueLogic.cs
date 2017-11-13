@@ -80,7 +80,7 @@ namespace Fantasy_Playoff_Machine.Logic
 			}
 			else
 			{
-				foreach (var division in dynamicResult.league.settings.divisions)
+				foreach (var division in dynamicResult.league.settings.divisions.division)
 				{
 					finalSettings.Divisions.Add(new EspnDivision { Name = division.name, ID = division.division_id, Teams = new List<EspnTeam>() });
 				}
@@ -101,7 +101,8 @@ namespace Fantasy_Playoff_Machine.Logic
 			foreach (var dynamicTeam in teams.teams.team)
 			{
 				var espnTeam = new EspnTeam();
-				var division = finalSettings.Divisions.First(_ => _.ID == (dynamicTeam.division_id ?? 1));
+				var teamDivisionId = dynamicTeam.division_id == null ? 1 : Convert.ToInt32(dynamicTeam.division_id?.Value);
+				var division = finalSettings.Divisions.First(_ => _.ID == teamDivisionId);
 
 				espnTeam.Division = division.Name;
 				division.Teams.Add(espnTeam);

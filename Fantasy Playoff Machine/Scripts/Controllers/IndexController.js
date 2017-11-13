@@ -13,7 +13,6 @@
 			$scope.demo = function () {
 				$window.open("/Home/Demo", "_self");
 			};
-
 			$scope.addDisabled = function () {
 				return !$scope.leagueIDToAdd && !$scope.leagueNameToAdd;
 			};

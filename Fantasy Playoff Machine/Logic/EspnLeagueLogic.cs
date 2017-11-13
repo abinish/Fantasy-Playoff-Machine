@@ -73,6 +73,10 @@ namespace Fantasy_Playoff_Machine.Logic
 						}
 
 						var scheduledWeek = remainingSchedule.First(_ => _.Week == week.Value);
+						if (matchup.matchups[0].isBye.Value)
+						{
+							continue;
+						}
 
 						var awayTeam = matchup.matchups[0].awayTeam.teamLocation + " " + matchup.matchups[0].awayTeam.teamNickname;
 						var homeTeam = matchup.matchups[0].homeTeam.teamLocation + " " + matchup.matchups[0].homeTeam.teamNickname;
@@ -101,6 +105,12 @@ namespace Fantasy_Playoff_Machine.Logic
 						}
 
 						var scheduledWeek = completedSchedule.First(_ => _.Week == week.Value);
+
+						if (matchup.matchups[0].isBye.Value)
+						{
+							//If its a bye skip it all
+							continue;
+						}
 
 						var awayTeam = matchup.matchups[0].awayTeam.teamLocation + " " + matchup.matchups[0].awayTeam.teamNickname;
 						var homeTeam = matchup.matchups[0].homeTeam.teamLocation + " " + matchup.matchups[0].homeTeam.teamNickname;

@@ -23,46 +23,23 @@ textarea {
     max-width: 280px;
 }
 
-.tooltip {
+.test-tooltip {
+	display: inline;
 	position: relative;
-	display: inline-block;
-	border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+	margin: 5px;
 }
 
-	/* Tooltip text */
-	.tooltip .tooltiptext {
-		visibility: hidden;
-		width: 120px;
-		background-color: #555;
+	.test-tooltip:hover:after {
+		background: #333;
+		background: rgba(0,0,0,.8);
+		border-radius: 5px;
+		bottom: 26px;
+		white-space: pre;
 		color: #fff;
-		text-align: center;
-		padding: 5px 0;
-		border-radius: 6px;
-		/* Position the tooltip text */
+		content: attr(data-tooltip);
+		left: 20%;
+		padding: 5px 15px;
 		position: absolute;
-		z-index: 1;
-		bottom: 125%;
-		left: 50%;
-		margin-left: -60px;
-		/* Fade in tooltip */
-		opacity: 0;
-		transition: opacity 1s;
-	}
-
-		/* Tooltip arrow */
-		.tooltip .tooltiptext::after {
-			content: "";
-			position: absolute;
-			top: 100%;
-			left: 50%;
-			margin-left: -5px;
-			border-width: 5px;
-			border-style: solid;
-			border-color: #555 transparent transparent transparent;
-		}
-
-	/* Show the tooltip text when you mouse over the tooltip container */
-	.tooltip:hover .tooltiptext {
-		visibility: visible;
-		opacity: 1;
+		z-index: 98;
+		font-size: .7em;
 	}
