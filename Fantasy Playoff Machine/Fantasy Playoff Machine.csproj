@@ -226,7 +226,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>64474</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:64474/</IISUrl>
+          <IISUrl>https://localhost:44313/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
