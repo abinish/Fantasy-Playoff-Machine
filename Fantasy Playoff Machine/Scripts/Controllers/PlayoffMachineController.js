@@ -81,7 +81,9 @@
 
 				//Remove division winners from overall ranks
 				unrankedTeams = unrankedTeams.filter(function (team) {
-					return divisionWinners.indexOf(team) < 0;
+					return _.findIndex(divisionWinners, function (eachTeam) {
+						return eachTeam.TeamName == team.TeamName;
+					}) < 0;
 				})
 
 				//Sort division winners
@@ -111,23 +113,29 @@
 						return team.WinPercentage === sortedTeams[0].WinPercentage;
 					});
 
-					//If only one team has the top record then we found it
-					if (topTeams.length === 1) {
-						var topTeam = sortedTeams.shift();
-						orderedTeams.push(topTeam);
-					} else {
-
+					//Loop through until all of these tiebreakers are resolved
+					while (topTeams.length > 1) {
 						//Otherwise find the tiebreaker winner
 						var tiebreakerObject = $scope.generateTiebreakerObject(topTeams);
 
 						var topTeam = $scope.determineTieBreakersWinner(topTeams, $scope.league.Site, tiebreakerObject);
 
+						//Remove from all teams
 						var index = sortedTeams.indexOf(topTeam);
 						if (index > -1)
 							sortedTeams.splice(index, 1);
 
+						//Remove from tiebreaking teams
+						index = topTeams.indexOf(topTeam);
+						if (index > -1)
+							topTeams.splice(index, 1);
+
 						orderedTeams.push(topTeam);
 					}
+
+					var finalTeam = sortedTeams.shift();
+					orderedTeams.push(finalTeam);
+					
 				}
 				return orderedTeams;
 			};
@@ -272,6 +280,7 @@
 
 			$scope.headToHeadTiebreaker = function (teams, tiebreaker) {
 				var headToHeadTeams = [];
+				var totalTeams = teams.length;
 
 				for (var i = 0; i < teams.length; i++) {
 					var selectedTeam = teams[i];
@@ -332,9 +341,41 @@
 					return team.WinPercentage === bestRecordTeam.WinPercentage;
 				});
 
+				var teamsWithoutMatchingWinPercentage = _.filter(headToHeadTeams, function (team) {
+					return team.WinPercentage !== bestRecordTeam.WinPercentage;
+				});
+
 				//If more than one team has the same winning percentage then we can't use head to head
 				if (teamsWithMatchingWinPercentage.length > 1) {
-					tiebreaker.Messages.push("Head to head tiebreaker could not break the tie because multiple teams have the same head to head record");
+					_.each(teamsWithoutMatchingWinPercentage, function (team) {
+						var currentTiebreaker = angular.copy(tiebreaker);
+						currentTiebreaker.Messages.push("Lost head to head tiebreaker due to multiple teams being " + bestRecordTeam.Wins + "-" + bestRecordTeam.Losses + "-" + bestRecordTeam.Ties + " compared to " + team.Wins + "-" + team.Losses + "-" + team.Ties);
+						team.Team.Tiebreakers.push(currentTiebreaker);
+
+						var index = _.findIndex(teams, function (eachTeam) {
+							return eachTeam.TeamName == team.Team.TeamName;
+						});
+						if (index > -1)
+							teams.splice(index, 1);
+
+					});
+
+
+					teams = _.filter(teams, function (remainingTeam) {
+						return _.some(teamsWithMatchingWinPercentage, function (matchingWinPercentageTeam) {
+							return matchingWinPercentageTeam.Team.TeamName === remainingTeam.TeamName;
+						});
+					});
+
+					var remainingTeams = _.map(teams, function (team) {
+						return team.TeamName;
+					})
+
+					var remainingText = "";
+					if (totalTeams > 2)
+						remainingText = " Teams remaining: " + remainingTeams.join(', ');
+
+					tiebreaker.Messages.push("Head to head tiebreaker could not break the tie because multiple teams have the same head to head record." + remainingText);
 					return undefined;
 				}
 
@@ -344,7 +385,7 @@
 				});
 				var loserStrings = _.map(losers, function (team) {
 					return team.Team.TeamName + ": " + team.Wins + "-" + team.Losses + "-" + team.Ties;
-				})
+				});
 
 				//Set losers tiebreaker
 				_.each(losers, function (team) {
