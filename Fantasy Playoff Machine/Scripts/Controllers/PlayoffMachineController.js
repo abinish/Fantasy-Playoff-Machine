@@ -40,7 +40,7 @@
 			}
 
 			$scope.getTeamClass = function (team) {
-				if(team.OverallRank <= $scope.league.LeagueSettings.PlayoffTeams)
+				if (team.OverallRank <= $scope.league.LeagueSettings.PlayoffTeams)
 					return "success"
 
 				return "";
@@ -50,7 +50,7 @@
 				var tiebreaker = {
 					Messages: []
 				};
-				tiebreaker.Messages.push("Tiebreaker between " + teams.map(function (team) { return team.TeamName}).join(', '));
+				tiebreaker.Messages.push("Tiebreaker between " + teams.map(function (team) { return team.TeamName }).join(', '));
 				return tiebreaker
 			};
 
@@ -61,7 +61,7 @@
 				var ranksRemaining = [];
 
 				for (var i = 0; i < $scope.teams.length; i++) {
-					ranksRemaining.push(i+1);
+					ranksRemaining.push(i + 1);
 				}
 				_.each($scope.teams, function (team) {
 					team.WinPercentage = (team.Wins + (0.5) * team.Ties) / Math.max((team.Wins + team.Ties + team.Losses), 1);
@@ -69,8 +69,8 @@
 					team.Tiebreakers = [];
 					unrankedTeams.push(team);
 				});
-				
-				
+
+
 				//Find division winners
 				for (var i = 0; i < $scope.league.LeagueSettings.Divisions.length; i++) {
 					var divisionWinner = $scope.determineDivisionWinner(_.sortBy($scope.league.LeagueSettings.Divisions[i].Teams, function (team) {
@@ -88,7 +88,7 @@
 
 				//Sort division winners
 				var sortedDivisionWinners = $scope.sortTeams(divisionWinners);
-				
+
 				//Apply ranking
 				$scope.setTeamRanking(ranksRemaining, sortedDivisionWinners)
 
@@ -107,7 +107,7 @@
 				var sortedTeams = _.sortBy(teams, function (team) {
 					return team.WinPercentage;
 				}).reverse();
-				
+
 				while (sortedTeams.length > 0) {
 					var topTeams = sortedTeams.filter(function (team) {
 						return team.WinPercentage === sortedTeams[0].WinPercentage;
@@ -133,9 +133,14 @@
 						orderedTeams.push(topTeam);
 					}
 
-					var finalTeam = sortedTeams.shift();
-					orderedTeams.push(finalTeam);
-					
+					var temp = topTeams.shift();
+
+					////Remove from teams
+					var index = sortedTeams.indexOf(temp);
+					if (index > -1)
+						sortedTeams.splice(index, 1);
+
+					orderedTeams.push(temp);
 				}
 				return orderedTeams;
 			};
@@ -179,7 +184,7 @@
 
 				} else {
 					if ($scope.league.LeagueSettings.PlayoffTiebreakerID == 0) { //Head to head
-						var winner = $scope.headToHeadTiebreaker(teams, tiebreaker);
+						var winner = $scope.headToHeadTiebreaker(teams, tiebreaker, site);
 						if (winner)
 							return winner;
 
@@ -203,7 +208,7 @@
 						if (winner)
 							return winner;
 
-						winner = $scope.headToHeadTiebreaker(teams, tiebreaker);
+						winner = $scope.headToHeadTiebreaker(teams, tiebreaker, site);
 						if (winner)
 							return winner;
 
@@ -222,7 +227,7 @@
 						if (winner)
 							return winner;
 
-						winner = $scope.headToHeadTiebreaker(teams, tiebreaker);
+						winner = $scope.headToHeadTiebreaker(teams, tiebreaker, site);
 						if (winner)
 							return winner;
 
@@ -241,7 +246,7 @@
 						if (winner)
 							return winner;
 
-						winner = $scope.headToHeadTiebreaker(teams, tiebreaker);
+						winner = $scope.headToHeadTiebreaker(teams, tiebreaker, site);
 						if (winner)
 							return winner;
 
@@ -266,7 +271,7 @@
 				//Set losers tiebreaker
 				_.each(teams, function (team) {
 					var currentTiebreaker = angular.copy(tiebreaker);
-					currentTiebreaker.Messages.push("Lost coin flip tiebreaker to " + winningTeam.TeamName );
+					currentTiebreaker.Messages.push("Lost coin flip tiebreaker to " + winningTeam.TeamName);
 					team.Tiebreakers.push(currentTiebreaker);
 				});
 
@@ -278,7 +283,7 @@
 				return winningTeam;
 			};
 
-			$scope.headToHeadTiebreaker = function (teams, tiebreaker) {
+			$scope.headToHeadTiebreaker = function (teams, tiebreaker, site) {
 				var headToHeadTeams = [];
 				var totalTeams = teams.length;
 
@@ -297,12 +302,12 @@
 						if (matchup.AwayTeamName == selectedTeam.TeamName && _.findWhere(otherTeams, { TeamName: matchup.HomeTeamName })) {
 							if (matchup.AwayTeamWon) {
 								teamWins++;
-							} else if (matchup.HomeTeamWon){
+							} else if (matchup.HomeTeamWon) {
 								teamLosses++;
 							} else if (matchup.Tie) {
 								teamTies++;
 							}
-						} else if (matchup.HomeTeamName == selectedTeam.TeamName && _.findWhere(otherTeams, { TeamName: matchup.AwayTeamName })){
+						} else if (matchup.HomeTeamName == selectedTeam.TeamName && _.findWhere(otherTeams, { TeamName: matchup.AwayTeamName })) {
 							if (matchup.HomeTeamWon) {
 								teamWins++;
 							} else if (matchup.AwayTeamWon) {
@@ -316,7 +321,7 @@
 					headToHeadTeams.push({
 						Team: selectedTeam,
 						TotalGames: totalGames,
-						WinPercentage: (teamWins + (0.5) * teamTies) / Math.max((teamWins + teamLosses + teamTies),1),
+						WinPercentage: (teamWins + (0.5) * teamTies) / Math.max((teamWins + teamLosses + teamTies), 1),
 						Wins: teamWins,
 						Losses: teamLosses,
 						Ties: teamTies
@@ -372,8 +377,14 @@
 					})
 
 					var remainingText = "";
-					if (totalTeams > 2)
-						remainingText = " Teams remaining: " + remainingTeams.join(', ');
+					//If there are multiple teams remaining and not all are moving on we have to restart the tiebreaking with the remaining teams
+					if (totalTeams > 2 && totalTeams !== teams.length) {
+						remainingText = " Teams remaining: " + remainingTeams.join(', ') + ". Remaining teams will restart the tiebreaking process";
+						tiebreaker.Messages.push("Head to head tiebreaker could not break the tie because multiple teams have the same head to head record." + remainingText);
+
+						return $scope.determineTieBreakersWinner(teams, site, tiebreaker);
+					}
+
 
 					tiebreaker.Messages.push("Head to head tiebreaker could not break the tie because multiple teams have the same head to head record." + remainingText);
 					return undefined;
@@ -544,8 +555,8 @@
 					})
 						&&
 						_.some(division.Teams, function (team) {
-						return team.TeamName == matchup.HomeTeamName;
-					})
+							return team.TeamName == matchup.HomeTeamName;
+						})
 				});
 
 				//Get Teams
@@ -566,7 +577,7 @@
 						homeTeam.DivisionTies--;
 						awayTeam.DivisionTies--;
 					}
-					
+
 				} else if (matchup.AwayTeamWon) {
 					//remove away team win and remove home team loss
 					awayTeam.Wins--;
@@ -626,7 +637,7 @@
 
 			}
 
-			for (var i = 0; i < $scope.league.LeagueSettings.Divisions.length; i++){
+			for (var i = 0; i < $scope.league.LeagueSettings.Divisions.length; i++) {
 				var x = $scope.league.LeagueSettings.Divisions[i];
 				for (var j = 0; j < x.Teams.length; j++) {
 					$scope.teams.push($scope.league.LeagueSettings.Divisions[i].Teams[j]);
@@ -639,7 +650,7 @@
 			for (var i = 0; i < $scope.league.CompletedSchedule.length; i++) {
 				$scope.totalSchedule = $scope.totalSchedule.concat($scope.league.CompletedSchedule[i].Matchups);
 			}
-			
+
 			$scope.orderStandings();
 		}
 	]
