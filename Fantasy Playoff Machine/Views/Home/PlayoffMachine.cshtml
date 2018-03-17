@@ -7,9 +7,9 @@
 <div ng-controller="PlayoffMachineController" ng-cloak>
 	<!--Divisions-->
 	<div>
-		<table  class="table">
+		<table class="table">
 			<tr>
-				<td ng-repeat="division in league.LeagueSettings.Divisions"> 
+				<td ng-repeat="division in league.LeagueSettings.Divisions">
 					<h2>{{division.Name}}</h2>
 					<table class="table">
 						<thead>
@@ -26,11 +26,11 @@
 									<div ng-show="team.Tiebreakers.length === 0">
 										{{team.TeamName}}
 									</div>
-									<div ng-show="team.Tiebreakers.length > 0"  class="test-tooltip" data-html="true" data-tooltip="{{generateTiebreakerHtml(team.Tiebreakers)}}">
+									<div ng-show="team.Tiebreakers.length > 0" class="test-tooltip" data-html="true" data-tooltip="{{generateTiebreakerHtml(team.Tiebreakers)}}">
 										{{team.TeamName}}<i class="fa fa-info" aria-hidden="true" style="padding-left:5px"></i>
 									</div>
-								
-								
+
+
 								</td>
 								<td>{{team.Wins}}</td>
 								<td>{{team.Losses}}</td>
@@ -60,7 +60,5 @@
 				</table>
 			</div>
 		</div>
-
-
-
+	</div>
 </div>
