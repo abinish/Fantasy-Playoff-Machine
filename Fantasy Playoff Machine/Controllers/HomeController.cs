@@ -58,6 +58,28 @@ namespace Fantasy_Playoff_Machine.Controllers
 			return View(GetLeagueData(data));
 		}
 
+		public ActionResult PlayoffOdds(string site, int leagueId, string userId)
+		{
+			if (site.ToLowerInvariant().Equals("yahoo"))
+			{
+				var creds = DatabaseLogic.GetYahooCredentials(userId);
+				if (creds.IsExpired)
+					creds = AuthController.GetAccessTokenFromRefreshToken(creds);
+
+				return View(YahooLeagueLogic.CreateLeagueObject(leagueId, creds));
+			}
+
+			// If not yahoo then assume espn
+			return View(GetLeagueData(ExecuteESPNRequest(leagueId)));
+		}
+
+		[HttpPost]
+		public ActionResult PlayoffOdds(string data)
+		{
+			//This can only be ESPN Leagues
+			return View(GetLeagueData(data));
+		}
+
 		public ActionResult PowerRankings(string site, int leagueId, string userId)
 		{
 			if (site.ToLowerInvariant().Equals("yahoo"))

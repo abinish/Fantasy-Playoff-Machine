@@ -1,4 +1,5 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
+using System;
 
 namespace Fantasy_Playoff_Machine.Models
 {
@@ -15,7 +16,7 @@ namespace Fantasy_Playoff_Machine.Models
 		public string Expires { get; set; }
 
 		[DynamoDBIgnore]
-		public bool IsExpired => true;// Convert.ToDateTime(Expires) < DateTime.Now;
+		public bool IsExpired => Convert.ToDateTime(Expires) < DateTime.Now;
 
 	}
 }

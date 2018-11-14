@@ -1,0 +1,27 @@
+﻿@model Fantasy_Playoff_Machine.Models.EspnLeague
+
+<script language="JavaScript">
+    window.__preloadedData.League = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+</script>
+
+<div ng-controller="PlayoffOddsController" ng-cloak>
+	<div>
+		<h1>Playoff Odds</h1>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Team Name</th>
+					<th style="text-align:center" ng-repeat="team in teams track by $index">{{$index + 1}}</th>
+					<th style="text-align:center">Total</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="team in teams | orderBy:getTotalOddsValue:true">
+					<td>{{team.TeamName}}</td>
+					<td style="text-align:center" ng-class="getOddsColumnClass($index)" ng-repeat="odds in results[team.TeamName] track by $index">{{getOddsValue(team, $index)}}</td>
+					<td style="text-align:center">{{getTotalOddsValue(team)}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

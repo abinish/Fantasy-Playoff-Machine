@@ -19,6 +19,8 @@
 				<br />
 				<a href="Home/PlayoffMachine?site={{league.Site}}&leagueId={{league.ID}}&userId={{yahooUserId}}" ng-show="!league.PrivateLeague">Playoff Machine</a>
 				<br />
+				<a href="Home/PlayoffOdds?site={{league.Site}}&leagueId={{league.ID}}&userId={{yahooUserId}}" ng-show="!league.PrivateLeague">Playoff Odds</a>
+				<br />
 			</div>
 			<br/>
 		</div>
@@ -50,15 +52,23 @@
 			<textarea ng-model="privateLeagueDataToAdd" rows="10"></textarea><br />
 			<div ng-show="privateLeagueDataToAdd !== ''">
 				4. Select which screen you want to open:<br />
-				<form action="Home/PlayoffMachine" method="post" id="lowerPM">
+				<form action="Home/PlayoffMachine" method="post" id="lowerPM" target="_blank">
 					<input type="text" name="data" ng-model="privateLeagueDataToAdd" ng-show="false" />
 					<a onclick="document.forms['lowerPM'].submit(); return false;" style="cursor: pointer">Playoff Machine</a>
 				</form>
-				<form action="Home/PowerRankings" method="post" id="lowerPR">
+				<form action="Home/PowerRankings" method="post" id="lowerPR" target="_blank">
 					<input type="text" name="data" ng-model="privateLeagueDataToAdd" ng-show="false" />
 					<a onclick="document.forms['lowerPR'].submit(); return false;" style="cursor: pointer">Power Rankings</a>
 				</form>
+				<form action="Home/PlayoffOdds" method="post" id="lowerPO" target="_blank">
+					<input type="text" name="data" ng-model="privateLeagueDataToAdd" ng-show="false" />
+					<a onclick="document.forms['lowerPO'].submit(); return false;" style="cursor: pointer">Playoff Odds</a>
+				</form>
 			</div>
 		</div>
+	</div>
+
+	<div  ng-show="leagues.length !== 0" style="position:fixed;bottom:50px;width:100%">
+		Questions? Comments? Reach out to my reddit account "justlikepudge"
 	</div>
 </div>

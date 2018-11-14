@@ -1,0 +1,45 @@
+﻿@model Fantasy_Playoff_Machine.Models.EspnLeague
+
+<script language="JavaScript">
+    window.__preloadedData.League = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+</script>
+
+<div ng-controller="SchedulerController" ng-cloak>
+	<!--Divisions-->
+	<div>
+		<table class="table">
+			<tr>
+				<td ng-repeat="division in league.LeagueSettings.Divisions">
+					<h2>{{division.Name}}</h2>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Team Name</th>
+								<th>Wins</th>
+								<th>Losses</th>
+								<th>Ties</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-class="getTeamClass(team)" ng-repeat="team in division.Teams | orderBy:dynamicStandings">
+								<td>
+									<div ng-show="team.Tiebreakers.length === 0">
+										{{team.TeamName}}
+									</div>
+									<div ng-show="team.Tiebreakers.length > 0" class="test-tooltip" data-html="true" data-tooltip="{{generateTiebreakerHtml(team.Tiebreakers)}}">
+										{{team.TeamName}}<i class="fa fa-info" aria-hidden="true" style="padding-left:5px"></i>
+									</div>
+
+
+								</td>
+								<td>{{team.Wins}}</td>
+								<td>{{team.Losses}}</td>
+								<td>{{team.Ties}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
