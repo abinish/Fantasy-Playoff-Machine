@@ -5,7 +5,7 @@
 			$scope.teams = [];
 			$scope.totalSchedule = [];
 			$scope.results = {};
-			$scope.iterations = 2000;
+			$scope.iterations = 4000;
 
 			$scope.getOddsColumnClass = function (place) {
 				if (place <= $scope.league.LeagueSettings.PlayoffTeams - 1)
@@ -21,7 +21,7 @@
 			$scope.getTotalOddsValue = function (team) {
 				var playoffOdds = 0;
 
-				for (var i = 0; i < $scope.league.LeagueSettings.PlayoffTeams - 1; i++){
+				for (var i = 0; i <= $scope.league.LeagueSettings.PlayoffTeams - 1; i++){
 					playoffOdds += $scope.results[team.TeamName][i];
 				}
 
@@ -46,7 +46,11 @@
 
 				//Find division winners
 				for (var i = 0; i < $scope.league.LeagueSettings.Divisions.length; i++) {
-					var divisionWinner = $scope.determineDivisionWinner(_.sortBy($scope.league.LeagueSettings.Divisions[i].Teams, function (team) {
+					var divisionTeams = _.filter($scope.teams, function (team) {
+						return team.Division === $scope.league.LeagueSettings.Divisions[i].Name;
+					});
+
+					var divisionWinner = $scope.determineDivisionWinner(_.sortBy(divisionTeams, function (team) {
 						return team.WinPercentage;
 					}).reverse(), $scope.league.Site, ranksRemaining[0]);
 					divisionWinners.push(divisionWinner);
