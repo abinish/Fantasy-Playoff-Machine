@@ -163,8 +163,8 @@
     <Content Include="Scripts\app.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\Controllers\PlayoffOddsController.js" />
     <Content Include="Scripts\Controllers\SchedulerController.js" />
+    <Content Include="Scripts\Controllers\PlayoffOddsController.js" />
     <Content Include="Scripts\Controllers\PowerRankingsController.js" />
     <Content Include="Scripts\Controllers\PlayoffMachineController.js" />
     <Content Include="Scripts\Controllers\IndexController.js" />
