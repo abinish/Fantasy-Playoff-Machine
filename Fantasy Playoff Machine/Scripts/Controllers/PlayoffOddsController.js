@@ -585,9 +585,14 @@
 							if (week.Matchups[i].HomeTeamName === team.TeamName)
 								return week.Matchups[i].HomeTeamScore;
 						}
-					}).sort().slice(1, -1);
-					team.averageScore = math.mean(team.filteredScores);
-					team.standardDeviation = Math.round(math.std(team.filteredScores));
+					}).filter(n => n).sort().slice(1, -1);
+					if (team.filteredScores.length !== 0) {
+						team.averageScore = math.mean(team.filteredScores);
+						team.standardDeviation = Math.round(math.std(team.filteredScores));
+					} else {
+						team.averageScore = 0;
+						team.standardDeviation = 0;
+					}
 				});
 				//Save existing data for reuse
 				var league = angular.copy($scope.league);
