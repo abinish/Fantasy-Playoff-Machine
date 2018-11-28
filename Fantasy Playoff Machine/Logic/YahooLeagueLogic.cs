@@ -115,9 +115,9 @@ namespace Fantasy_Playoff_Machine.Logic
 				espnTeam.Wins = teamStandings.team_standings.outcome_totals.wins;
 				espnTeam.Losses = teamStandings.team_standings.outcome_totals.losses;
 				espnTeam.Ties = teamStandings.team_standings.outcome_totals.ties;
-				espnTeam.DivisionWins = (teamStandings.team_standings.division_outcome_totals?.wins ?? teamStandings.team_standings.outcome_totals.wins);
-				espnTeam.DivisionLosses = (teamStandings.team_standings.division_outcome_totals?.losses ?? teamStandings.team_standings.outcome_totals.losses);
-				espnTeam.DivisionTies = (teamStandings.team_standings.division_outcome_totals?.ties ?? teamStandings.team_standings.outcome_totals.ties);
+				espnTeam.DivisionWins = (teamStandings.team_standings.divisional_outcome_totals?.wins ?? teamStandings.team_standings.outcome_totals.wins);
+				espnTeam.DivisionLosses = (teamStandings.team_standings.divisional_outcome_totals?.losses ?? teamStandings.team_standings.outcome_totals.losses);
+				espnTeam.DivisionTies = (teamStandings.team_standings.divisional_outcome_totals?.ties ?? teamStandings.team_standings.outcome_totals.ties);
 				espnTeam.DivisionRank = teamStandings.team_standings.rank;
 				espnTeam.OverallRank = teamStandings.team_standings.rank;
 				//Points against will have to be set in matchups
