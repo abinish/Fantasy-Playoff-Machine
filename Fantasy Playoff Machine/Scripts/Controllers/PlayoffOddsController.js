@@ -28,6 +28,21 @@
 				return Math.round(playoffOdds * 100) / 100;
 			}
 
+			$scope.getTotalOddsSortValue = function (team) {
+				var playoffOdds = 0;
+				var positionalOdds = 0;
+
+				for (var i = 0; i <= $scope.results[team.TeamName].length - 1; i++) {
+
+					if (i <=  $scope.league.LeagueSettings.PlayoffTeams - 1)
+						playoffOdds += $scope.results[team.TeamName][i];
+
+					positionalOdds += ($scope.results[team.TeamName][i] / (i + 1));
+				}
+				
+				return (playoffOdds * 100) + positionalOdds;
+			}
+
 			$scope.orderStandings = function () {
 				//Set overall rank on each team
 				var unrankedTeams = [];

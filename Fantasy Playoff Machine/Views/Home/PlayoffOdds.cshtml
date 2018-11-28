@@ -16,7 +16,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="team in teams | orderBy:getTotalOddsValue:true">
+				<tr ng-repeat="team in teams | orderBy:getTotalOddsSortValue:true">
 					<td>{{team.TeamName}}</td>
 					<td style="text-align:center" ng-class="getOddsColumnClass($index)" ng-repeat="odds in results[team.TeamName] track by $index">{{getOddsValue(team, $index)}}</td>
 					<td style="text-align:center">{{getTotalOddsValue(team)}}</td>
