@@ -495,7 +495,7 @@
 
 
 				var topTeams = sortedTeams.filter(function (team) {
-					return team.WinPercentage === sortedTeams[0].WinPercentage;
+					return team.DivisionWinPercentage === sortedTeams[0].DivisionWinPercentage;
 				});
 
 				//If only one team has the top record then we found it
