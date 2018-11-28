@@ -536,14 +536,15 @@
 				}
 			}
 
-			for (var i = 0; i < $scope.league.RemainingSchedule.length; i++) {
-				$scope.totalSchedule = $scope.totalSchedule.concat($scope.league.RemainingSchedule[i].Matchups);
+			var generateTotalSchedule = function () {
+				$scope.totalSchedule = [];
+				for (var i = 0; i < $scope.league.RemainingSchedule.length; i++) {
+					$scope.totalSchedule = $scope.totalSchedule.concat($scope.league.RemainingSchedule[i].Matchups);
+				}
+				for (var i = 0; i < $scope.league.CompletedSchedule.length; i++) {
+					$scope.totalSchedule = $scope.totalSchedule.concat($scope.league.CompletedSchedule[i].Matchups);
+				}
 			}
-			for (var i = 0; i < $scope.league.CompletedSchedule.length; i++) {
-				$scope.totalSchedule = $scope.totalSchedule.concat($scope.league.CompletedSchedule[i].Matchups);
-			}
-
-
 			// Standard Normal variate using Box-Muller transform.
 			// Shamelessly stolen from stackoverflow
 			var random = function() {
@@ -623,10 +624,11 @@
 
 					$scope.league = league;
 					$scope.teams = teams;
-					$scope.totalSchedule = totalSchedule
+					generateTotalSchedule();
 				}
 			}
 
+			generateTotalSchedule();
 			$scope.runPlayoffOddsCalculation();
 		}
 	]
