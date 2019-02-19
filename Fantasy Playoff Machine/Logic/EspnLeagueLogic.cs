@@ -20,172 +20,137 @@ namespace Fantasy_Playoff_Machine.Logic
 			return currentDateTime.Year - 1;
 		}
 
+		public static int ConvertNewPlayoffTieBreakerToOld(string tiebreaker)
+		{
+			if (tiebreaker.Equals("H2H_RECORD"))
+			{
+				return 0;
+			}
+			else if (tiebreaker.Equals("TOTAL_POINTS_SCORED"))
+			{
+				return 1;
+			}
+			else if(tiebreaker.Equals("INTRA_DIVISION_RECORD"))
+			{
+				return 2;
+			}
+			else if (tiebreaker.Equals("TOTAL_POINTS_AGAINST"))
+			{
+				return 3;
+			}
+
+			//Should never get here
+			return -1;
+		}
+
 		public static EspnLeague CreateLeagueObject(dynamic result)
 		{
-			var leagueSettings = result.leaguesettings;
+			var settings = result.settings;
 			var finalSettings = new EspnLeagueSettings();
+			var allTeams = new List<EspnTeam>();
 
-			finalSettings.LeagueName = leagueSettings.name;
+			finalSettings.LeagueName = settings.name;
 			finalSettings.Divisions = new List<EspnDivision>();
-			finalSettings.LeagueFormatTypeId = leagueSettings.leagueFormatTypeId;
-			finalSettings.LeagueStatusTypeId = leagueSettings.leagueStatusTypeId;
-			finalSettings.PlayoffTeams = leagueSettings.playoffTeamCount;
-			finalSettings.PlayoffTiebreakerID = leagueSettings.playoffTieRule;
-			finalSettings.RegularSeasonWeeks = leagueSettings.regularSeasonMatchupPeriodCount;
-			finalSettings.RegularTiebreakerID = leagueSettings.playoffSeedingTieRuleRawStatId;
-			finalSettings.TieRule = leagueSettings.tieRule;
+
+			//finalSettings.LeagueFormatTypeId = leagueSettings.leagueFormatTypeId; //Not sure if this is used
+			//finalSettings.LeagueStatusTypeId = leagueSettings.leagueStatusTypeId; //Not sure if this is used
+			finalSettings.PlayoffTeams = settings.scheduleSettings.playoffTeamCount;
+			finalSettings.PlayoffTiebreakerID = ConvertNewPlayoffTieBreakerToOld(settings.scheduleSettings.playoffSeedingRule.Value);
+			finalSettings.RegularSeasonWeeks = settings.scheduleSettings.matchupPeriodCount;
+			//finalSettings.RegularTiebreakerID = settings.scoringSettings.matchupTieRule; //Not used
+			//finalSettings.TieRule = leagueSettings.tieRule; //Not used
 
 			//Create divisions
-			foreach (var division in leagueSettings.divisions)
-				finalSettings.Divisions.Add(new EspnDivision { Name = division.name, Teams = new List<EspnTeam>() });
+			foreach (var division in settings.scheduleSettings.divisions)
+				finalSettings.Divisions.Add(new EspnDivision { Name = division.name, ID = division.id, Teams = new List<EspnTeam>() });
 
 			//Create teams and remaining schedule
 			var remainingSchedule = new List<EspnWeek>();
 			var completedSchedule = new List<EspnWeek>();
 
-			foreach (var teamProperty in GetPropertyKeysForDynamic(leagueSettings.teams))
+			foreach (var team in result.teams)
 			{
-				var team = leagueSettings.teams[teamProperty];
+				var division = finalSettings.Divisions.FirstOrDefault(_ => _.ID == team.divisionId.Value);
 
 				var espnTeam = new EspnTeam
 				{
-					Division = team.division.divisionName,
-					TeamName = team.teamLocation + " " + team.teamNickname,
-					Wins = team.record.overallWins,
-					Losses = team.record.overallLosses,
-					Ties = team.record.overallTies,
-					DivisionRank = team.divisionStanding,
-					OverallRank = team.overallStanding
+					ID = team.id,
+					Division = division.Name,
+					TeamName = team.location + " " + team.nickname,
+					Wins = team.record.overall.wins,
+					Losses = team.record.overall.losses,
+					Ties = team.record.overall.ties,
+					DivisionWins = team.record.division.wins,
+					DivisionLosses = team.record.division.losses,
+					DivisionTies = team.record.division.ties,
+					PointsFor = team.record.overall.pointsFor,
+					PointsAgainst = team.record.overall.pointsAgainst
 				};
-				var division = finalSettings.Divisions.First(_ => _.Name.Equals(espnTeam.Division));
+				
+				allTeams.Add(espnTeam);
 				division.Teams.Add(espnTeam);
+			}
 
-				foreach (var matchup in team.scheduleItems)
+			foreach (var matchup in result.schedule)
+			{
+				//The week hasn't happened yet
+				if (matchup.winner.Value.Equals("UNDECIDED"))
 				{
-					//The week hasn't happened yet
-					if (matchup.matchups[0].outcome == 0)
+					var week = matchup.matchupPeriodId;
+					//Check if the schedule knows about this week yet, if not add it
+					if (!remainingSchedule.Any(_ => _.Week == week.Value))
 					{
-						var week = matchup.matchupPeriodId;
-						//Check if the schedule knows about this week yet, if not add it
-						if (!remainingSchedule.Any(_ => _.Week == week.Value))
-						{
-							remainingSchedule.Add(new EspnWeek { Week = week, Matchups = new List<EspnMatchupItem>() });
-						}
-
-						var scheduledWeek = remainingSchedule.First(_ => _.Week == week.Value);
-						if (matchup.matchups[0].isBye.Value)
-						{
-							continue;
-						}
-
-						var awayTeam = matchup.matchups[0].awayTeam.teamLocation + " " + matchup.matchups[0].awayTeam.teamNickname;
-						var homeTeam = matchup.matchups[0].homeTeam.teamLocation + " " + matchup.matchups[0].homeTeam.teamNickname;
-
-						//Check if the week knows about this matchup already, if not add it
-						if (!scheduledWeek.Matchups.Any(_ => _.AwayTeamName == awayTeam.Value && _.HomeTeamName == homeTeam.Value))
-						{
-							scheduledWeek.Matchups.Add(new EspnMatchupItem
-							{
-								AwayTeamName = awayTeam.Value,
-								HomeTeamName = homeTeam.Value,
-								NoWinnerSelected = true,
-								AwayTeamWon = false,
-								HomeTeamWon = false
-							});
-						}
+						remainingSchedule.Add(new EspnWeek { Week = week, Matchups = new List<EspnMatchupItem>() });
 					}
-					else //The week is completed 
+
+					var scheduledWeek = remainingSchedule.First(_ => _.Week == week.Value);
+
+					var awayTeam = allTeams.First(_ => _.ID == matchup.away.teamId.Value);
+					var homeTeam = allTeams.First(_ => _.ID == matchup.home.teamId.Value);
+
+					scheduledWeek.Matchups.Add(new EspnMatchupItem
 					{
-						var week = matchup.matchupPeriodId;
+						AwayTeamName = awayTeam.TeamName,
+						HomeTeamName = homeTeam.TeamName,
+						NoWinnerSelected = true,
+						AwayTeamWon = false,
+						HomeTeamWon = false
+					});
+					
+				}
+				else //The week is completed 
+				{
+					var week = matchup.matchupPeriodId;
 
-						//Check if the schedule knows about this week yet, if not add it
-						if (!completedSchedule.Any(_ => _.Week == week.Value))
+					//Check if the schedule knows about this week yet, if not add it
+					if (!completedSchedule.Any(_ => _.Week == week.Value))
+					{
+						completedSchedule.Add(new EspnWeek { Week = week, Matchups = new List<EspnMatchupItem>() });
+					}
+
+					var scheduledWeek = completedSchedule.First(_ => _.Week == week.Value);
+
+					var awayTeam = allTeams.First(_ => _.ID == matchup.away.teamId.Value);
+					var homeTeam = allTeams.First(_ => _.ID == matchup.home.teamId.Value);
+
+					var homeTeamWin = matchup.winner.Value.Equals("HOME");
+					var awayTeamWin = matchup.winner.Value.Equals("AWAY");
+					var tie = matchup.winner.Value.Equals("TIE");
+
+					//Check if the week knows about this matchup already, if not add it
+					if (!scheduledWeek.Matchups.Any(_ => _.AwayTeamName == awayTeam.TeamName && _.HomeTeamName == homeTeam.TeamName))
+					{
+						scheduledWeek.Matchups.Add(new EspnMatchupItem
 						{
-							completedSchedule.Add(new EspnWeek { Week = week, Matchups = new List<EspnMatchupItem>() });
-						}
-
-						var scheduledWeek = completedSchedule.First(_ => _.Week == week.Value);
-
-						if (matchup.matchups[0].isBye.Value)
-						{
-							//If its a bye skip it all
-							continue;
-						}
-
-						var awayTeam = matchup.matchups[0].awayTeam.teamLocation + " " + matchup.matchups[0].awayTeam.teamNickname;
-						var homeTeam = matchup.matchups[0].homeTeam.teamLocation + " " + matchup.matchups[0].homeTeam.teamNickname;
-
-						var homeTeamWin = matchup.matchups[0].outcome == 1;
-						var awayTeamWin = matchup.matchups[0].outcome == 2;
-						var tie = matchup.matchups[0].outcome == 3;
-
-						//Add the score for the game to the current team
-						if (espnTeam.TeamName == awayTeam.Value)
-						{
-							//Away team
-							espnTeam.PointsFor += (decimal)matchup.matchups[0].awayTeamScores[0];
-							espnTeam.PointsAgainst += (decimal)matchup.matchups[0].homeTeamScores[0];
-
-							//Check if division matchup
-							if (finalSettings.Divisions.Any(_ => _.Teams.Any(x => x.TeamName == awayTeam.Value) && _.Teams.Any(y => y.TeamName == homeTeam.Value)))
-							{
-
-								if (awayTeamWin)
-								{
-									espnTeam.DivisionWins++;
-								}
-								else if (homeTeamWin)
-								{
-									espnTeam.DivisionLosses++;
-								}
-								else if (tie)
-								{
-									espnTeam.DivisionTies++;
-								}
-							}
-
-						}
-						else
-						{
-							//Home team
-							espnTeam.PointsFor += (decimal)matchup.matchups[0].homeTeamScores[0];
-							espnTeam.PointsAgainst += (decimal)matchup.matchups[0].awayTeamScores[0];
-
-							//Check if division matchup
-							if (finalSettings.Divisions.Any(_ => _.Teams.Any(x => x.TeamName == awayTeam.Value) && _.Teams.Any(y => y.TeamName == homeTeam.Value)))
-							{
-
-								if (awayTeamWin)
-								{
-									espnTeam.DivisionLosses++;
-								}
-								else if (homeTeamWin)
-								{
-									espnTeam.DivisionWins++;
-								}
-								else if (tie)
-								{
-									espnTeam.DivisionTies++;
-								}
-							}
-						}
-
-
-						//Check if the week knows about this matchup already, if not add it
-						if (!scheduledWeek.Matchups.Any(_ => _.AwayTeamName == awayTeam.Value && _.HomeTeamName == homeTeam.Value))
-						{
-							scheduledWeek.Matchups.Add(new EspnMatchupItem
-							{
-								AwayTeamName = awayTeam.Value,
-								AwayTeamScore = matchup.matchups[0].awayTeamScores[0],
-								HomeTeamName = homeTeam.Value,
-								HomeTeamScore = matchup.matchups[0].homeTeamScores[0],
-								NoWinnerSelected = false,
-								AwayTeamWon = awayTeamWin,
-								HomeTeamWon = homeTeamWin,
-								Tie = tie
-							});
-						}
+							AwayTeamName = awayTeam.TeamName,
+							AwayTeamScore = matchup.away.totalPoints,
+							HomeTeamName = homeTeam.TeamName,
+							HomeTeamScore = matchup.home.totalPoints,
+							NoWinnerSelected = false,
+							AwayTeamWon = awayTeamWin,
+							HomeTeamWon = homeTeamWin,
+							Tie = tie
+						});
 					}
 				}
 			}

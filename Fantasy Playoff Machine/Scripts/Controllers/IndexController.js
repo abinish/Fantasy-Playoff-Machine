@@ -47,7 +47,7 @@
 						else if ($scope.selectedSite === "ESPN") {
 							//Show tips for doing private leagues
 							$scope.showPrivateLeagueSettings = true;
-							$scope.privateLeagueUri = "http://games.espn.com/ffl/api/v2/leagueSettings?leagueId=" + $scope.leagueIDToAdd + "&seasonId=" + getSeasonId();
+							$scope.privateLeagueUri = "http://fantasy.espn.com/apis/v3/games/ffl/seasons/" + getSeasonId() + "/segments/0/leagues/" + $scope.leagueIDToAdd + "view=mMatchupScore&view=mTeam";
 						} else {
 							alert("We could not properly load the league.  If you have questions, email support@theffhub.com");
 						}
@@ -105,7 +105,7 @@
 			};
 
 			$scope.generateLeagueDataUrl = function (league) {
-				return "http://games.espn.com/ffl/api/v2/leagueSettings?leagueId=" + league.ID + "&seasonId=" + getSeasonId();
+				return "http://fantasy.espn.com/apis/v3/games/ffl/seasons/" + getSeasonId() + "/segments/0/leagues/" + league.ID + "view=mMatchupScore&view=mTeam";
 			}
 
 			var getSeasonId = function () {

@@ -8,6 +8,8 @@ namespace Fantasy_Playoff_Machine.Models
 {
 	public class EspnTeam
 	{
+		public int ID { get; set; }
+
 		public string TeamName { get; set; }
 		
 		public string Division { get; set; }

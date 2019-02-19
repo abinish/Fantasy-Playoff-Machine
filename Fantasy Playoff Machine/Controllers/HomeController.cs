@@ -119,7 +119,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 			{
 				var result = ExecuteESPNRequest(leagueId);
 				var dynamicResult = JsonConvert.DeserializeObject<dynamic>(result);
-				if (dynamicResult.error == null)
+				if (dynamicResult.id != null)
 					return Json(true, JsonRequestBehavior.AllowGet);
 			}
 
@@ -144,12 +144,15 @@ namespace Fantasy_Playoff_Machine.Controllers
 
 		private string ExecuteESPNRequest(int leagueId)
 		{
-			var client = new RestClient("http://games.espn.com");
-			var request = new RestRequest("ffl/api/v2/leagueSettings", Method.GET);
-			request.AddParameter("leagueId", leagueId);
-			request.AddParameter("seasonId", EspnLeagueLogic.GetEspnSeasonId());
+			var client = new RestClient("http://fantasy.espn.com/");
+			var request = new RestRequest("apis/v3/games/ffl/seasons/" + EspnLeagueLogic.GetEspnSeasonId() + "/segments/0/leagues/" + leagueId, Method.GET);
+			request.AddParameter("view", "mMatchupScore");
+			request.AddParameter("view", "mTeam");
+			request.AddParameter("view", "mSettings");
 
+			var zz = client.BuildUri(request);
 			var result = client.Execute(request).Content;
+			
 			return result;
 		}
 
