@@ -14,7 +14,7 @@ namespace Fantasy_Playoff_Machine.Logic
 
 			//If it is the second half of the year return this year
 			//Otherwise it is early in the next year and espn uses the start of the season as the seasonID
-			if (currentDateTime.Month > 6)
+			if (currentDateTime.Month > 1)
 				return currentDateTime.Year;
 
 			return currentDateTime.Year - 1;
