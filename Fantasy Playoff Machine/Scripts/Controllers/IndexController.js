@@ -2,7 +2,7 @@
 	["$scope", "PreloadService", "$window", "$sce", "OverlayService", "$cookies", "$http", "$location",
 		function ($scope, preloadService, $window, $sce, overlayService, $cookies, $http, $location) {
 			$scope.leagues = [];
-			$scope.supportedSites = ["ESPN", "Yahoo"];
+			$scope.supportedSites = ["ESPN", "Yahoo", "Sleeper"];
 			$scope.selectedSite;
 			$scope.leagueIDToAdd;
 			$scope.leagueNameToAdd;
@@ -20,8 +20,9 @@
 			$scope.getImageUrl = function (selectedSite) {
 				if (selectedSite === "ESPN")
 					return "../Content/espnurl.PNG";
-
-				return "../Content/yahoourl.PNG";
+				else if(selectedSite === "Yahoo")
+					return "../Content/yahoourl.PNG";
+				return "";
 			}
 
 			$scope.showYahooAuthenticateButton = function () {

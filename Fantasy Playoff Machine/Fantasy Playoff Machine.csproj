@@ -137,6 +137,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Logic\DatabaseLogic.cs" />
+    <Compile Include="Logic\SleeperLeagueLogic.cs" />
     <Compile Include="Logic\EspnLeagueLogic.cs" />
     <Compile Include="Logic\YahooLeagueLogic.cs" />
     <Compile Include="Models\EspnDivision.cs" />

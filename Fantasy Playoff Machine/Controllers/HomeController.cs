@@ -46,6 +46,10 @@ namespace Fantasy_Playoff_Machine.Controllers
 
 				return View(YahooLeagueLogic.CreateLeagueObject(leagueId, creds));
 			}
+			else if (site.ToLowerInvariant().Equals("sleeper"))
+			{
+				return View(SleeperLeagueLogic.CreateLeagueObject(leagueId));
+			}
 
 			// If not yahoo then assume espn
 			return View(GetLeagueData(ExecuteESPNRequest(leagueId)));
@@ -68,6 +72,10 @@ namespace Fantasy_Playoff_Machine.Controllers
 
 				return View(YahooLeagueLogic.CreateLeagueObject(leagueId, creds));
 			}
+			else if (site.ToLowerInvariant().Equals("sleeper"))
+			{
+				return View(SleeperLeagueLogic.CreateLeagueObject(leagueId));
+			}
 
 			// If not yahoo then assume espn
 			return View(GetLeagueData(ExecuteESPNRequest(leagueId)));
@@ -89,6 +97,10 @@ namespace Fantasy_Playoff_Machine.Controllers
 					creds = AuthController.GetAccessTokenFromRefreshToken(creds);
 
 				return View(YahooLeagueLogic.CreateLeagueObject(leagueId, creds));
+			}
+			else if (site.ToLowerInvariant().Equals("sleeper"))
+			{
+				return View(SleeperLeagueLogic.CreateLeagueObject(leagueId));
 			}
 			
 			// If not yahoo then assume espn
@@ -121,6 +133,14 @@ namespace Fantasy_Playoff_Machine.Controllers
 				var dynamicResult = JsonConvert.DeserializeObject<dynamic>(result);
 				if (dynamicResult.id != null)
 					return Json(true, JsonRequestBehavior.AllowGet);
+			}
+			else if(site.ToLowerInvariant().Equals("sleeper"))
+			{
+				var result = SleeperLeagueLogic.GetSleeperEndpoint(leagueId);
+				if (result.total_rosters != null)
+				{
+					return Json(true, JsonRequestBehavior.AllowGet);
+				}
 			}
 
 			return Json(false, JsonRequestBehavior.AllowGet);
