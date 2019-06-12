@@ -1,5 +1,7 @@
 ﻿using Fantasy_Playoff_Machine.Models;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,14 +39,14 @@ namespace Fantasy_Playoff_Machine.Logic
 			//Create divisions
 			if (result.metadata == null)
 			{
-				finalSettings.Divisions.Add(new EspnDivision { Name = finalSettings.name, ID = 1, Teams = new List<EspnTeam>() });
+				finalSettings.Divisions.Add(new EspnDivision { Name = finalSettings.LeagueName, ID = 1, Teams = new List<EspnTeam>() });
 			}
 			else
 			{
 				try
 				{
 					var divisionId = 1;
-					foreach (var keys in GetPropertyKeysForDynamic(finalSettings.metadata))
+					foreach (var keys in GetPropertyKeysForDynamic(result.metadata))
 					{
 						var divisionPropName = "division_" + divisionId;
 						var propertyInfo = result.metadata.GetType().GetProperty(divisionPropName);
@@ -117,11 +119,11 @@ namespace Fantasy_Playoff_Machine.Logic
 						var week = i;
 
 						//Check if the schedule knows about this week yet, if not add it
-						if (!completedSchedule.Any(_ => _.Week == week.Value))
+						if (!completedSchedule.Any(_ => _.Week == week))
 						{
 							completedSchedule.Add(new EspnWeek { Week = week, Matchups = new List<EspnMatchupItem>() });
 						}
-						var scheduledWeek = completedSchedule.First(_ => _.Week == week.Value);
+						var scheduledWeek = completedSchedule.First(_ => _.Week == week);
 
 						var matchupDictionary = new Dictionary<int, EspnMatchupItem>();
 
@@ -157,11 +159,11 @@ namespace Fantasy_Playoff_Machine.Logic
 						var week = i;
 
 						//Check if the schedule knows about this week yet, if not add it
-						if (!completedSchedule.Any(_ => _.Week == week.Value))
+						if (!completedSchedule.Any(_ => _.Week == week))
 						{
 							completedSchedule.Add(new EspnWeek { Week = week, Matchups = new List<EspnMatchupItem>() });
 						}
-						var scheduledWeek = completedSchedule.First(_ => _.Week == week.Value);
+						var scheduledWeek = completedSchedule.First(_ => _.Week == week);
 
 						var matchupDictionary = new Dictionary<int, EspnMatchupItem>();
 
@@ -177,7 +179,7 @@ namespace Fantasy_Playoff_Machine.Logic
 
 							matchup.AwayTeamWon = matchup.AwayTeamScore > matchup.HomeTeamScore;
 							matchup.HomeTeamWon = matchup.HomeTeamScore > matchup.AwayTeamScore;
-							matchup.Tie = matchup.HomeTeamScore = matchup.AwayTeamScore;
+							matchup.Tie = matchup.HomeTeamScore == matchup.AwayTeamScore;
 
 
 							scheduledWeek.Matchups.Add(matchup);
