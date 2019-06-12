@@ -164,6 +164,7 @@
     <Content Include="Scripts\app.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\Controllers\TestController.js" />
     <Content Include="Scripts\Controllers\SchedulerController.js" />
     <Content Include="Scripts\Controllers\PlayoffOddsController.js" />
     <Content Include="Scripts\Controllers\PowerRankingsController.js" />
@@ -209,6 +210,7 @@
     <None Include="Properties\PublishProfiles\TheFFHub - Web Deploy.pubxml" />
     <Content Include="Views\Home\Scheduler.cshtml" />
     <Content Include="Views\Home\PlayoffOdds.cshtml" />
+    <Content Include="Views\Home\Test.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.4.19\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />

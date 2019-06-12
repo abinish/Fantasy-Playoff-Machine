@@ -1,0 +1,49 @@
+﻿<script>
+	function runRequest() {
+		try {
+			espnSWIDRequest(function (val) {
+				window.__preloadedData.swid = val;
+				espnS2Request(function (val) {
+					window.__preloadedData.s2 = val;
+				});
+			});
+		} catch (err) {
+			console.log("retrying");
+			setTimeout(function () { runRequest(); }, 1000);
+		}
+	}
+
+	document.addEventListener('DOMContentLoaded', function () {
+		runRequest();
+	});
+</script>
+<div ng-controller="Test" ng-cloak>
+
+
+	<h1>Test page to verify that we can access private leagues. Ensure that you are logged into ESPN.</h1>
+
+	<div ng-show="!swid">
+		Currently loading the SWID key for private data. If this does not resolve in 15 seconds please let justlikepudge know it didn't work.
+	</div>
+
+	<div ng-show="!s2">
+		Currently loading the S2 key for private data. If this does not resolve in 15 seconds please let justlikepudge know it didn't work.
+	</div>
+
+	<span ng-show="showLeagueBox()">
+		<span stlye="padding-top:100px">Grab the private league ID from the URL of your league:</span> <br/>
+
+		<input placeholder="League ID" type="number" ng-model="leagueIDToAdd"/> <img ng-src="{{getImageUrl(selectedSite)}}"/><br/>
+
+		<button class="btn btn-success" ng-click="addLeague()" ng-disabled="addDisabled()" style="margin-top: 10px">Test</button>
+	</span>
+
+	<div ng-show="leagueName">
+		<div ng-show="leagueNameSucceeded">
+			Your league name was loaded successfully as: {{leagueName}}
+		</div>
+		<div ng-show="leagueNameFailed">
+			Your league name failed to load.
+		</div>
+	</div>
+</div> 

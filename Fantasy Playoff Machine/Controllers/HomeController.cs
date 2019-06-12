@@ -183,5 +183,40 @@ namespace Fantasy_Playoff_Machine.Controllers
 			var league = EspnLeagueLogic.CreateLeagueObject(result);
 			return league;
 		}
+
+		[HttpGet]
+		public ActionResult Test()
+		{
+			return View();
+		}
+
+
+		[HttpGet]
+		public ActionResult TestLeague(int leagueId, string s2, string swid)
+		{
+			var result = ExecuteESPNRequest(leagueId, s2, swid);
+			var dynamicResult = JsonConvert.DeserializeObject<dynamic>(result);
+			if (dynamicResult.id == null)
+				return Json("FAILED", JsonRequestBehavior.AllowGet);
+
+			var league = GetLeagueData(result);
+			return Json(league.LeagueSettings.LeagueName, JsonRequestBehavior.AllowGet);
+		}
+
+		private string ExecuteESPNRequest(int leagueId, string s2, string swid)
+		{
+			var client = new RestClient("http://fantasy.espn.com/");
+			var request = new RestRequest("apis/v3/games/ffl/seasons/" + EspnLeagueLogic.GetEspnSeasonId() + "/segments/0/leagues/" + leagueId, Method.GET);
+			request.AddParameter("view", "mMatchupScore");
+			request.AddParameter("view", "mTeam");
+			request.AddParameter("view", "mSettings");
+			request.AddParameter("espn_s2", s2, ParameterType.Cookie);
+			request.AddParameter("SWID", swid, ParameterType.Cookie);
+
+			var zz = client.BuildUri(request);
+			var result = client.Execute(request).Content;
+
+			return result;
+		}
 	}
 }
