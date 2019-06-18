@@ -54,8 +54,14 @@
 		<div class="container">
 			<div class="navbar-header">
 				@Html.ActionLink("Fantasy Football Hub", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+				<ul class="nav navbar-nav navbar-right">
+					<li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "" })</li>
+					<li>@Html.ActionLink("Future additions/suggestions", "Suggestions", "Home", new { area = "" }, new { @class = "" })</li>
+					<li>@Html.ActionLink("Support the site", "Support", "Home", new { area = "" }, new { @class = "" })</li>
+				</ul>
 			</div>
 		</div>
+		@*<p class="navbar-text navbar-right">Signed in as <a href="#" class="navbar-link">Mark Otto</a></p>*@
 	</div>
 	<div class="container" style="width:95%">
 		@RenderBody()

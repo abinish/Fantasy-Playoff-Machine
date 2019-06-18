@@ -185,6 +185,18 @@ namespace Fantasy_Playoff_Machine.Controllers
 		}
 
 		[HttpGet]
+		public ActionResult Support()
+		{
+			return View();
+		}
+
+		[HttpGet]
+		public ActionResult Suggestions()
+		{
+			return View();
+		}
+
+		[HttpGet]
 		public ActionResult Test()
 		{
 			return View();

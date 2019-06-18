@@ -211,6 +211,8 @@
     <Content Include="Views\Home\Scheduler.cshtml" />
     <Content Include="Views\Home\PlayoffOdds.cshtml" />
     <Content Include="Views\Home\Test.cshtml" />
+    <Content Include="Views\Home\Support.cshtml" />
+    <Content Include="Views\Home\Suggestions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.4.19\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />
