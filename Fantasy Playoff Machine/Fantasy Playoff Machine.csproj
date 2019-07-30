@@ -213,6 +213,7 @@
     <Content Include="Views\Home\Test.cshtml" />
     <Content Include="Views\Home\Support.cshtml" />
     <Content Include="Views\Home\Suggestions.cshtml" />
+    <Content Include="Views\Home\Account.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.4.19\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />
