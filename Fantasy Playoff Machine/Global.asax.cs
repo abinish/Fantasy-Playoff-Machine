@@ -16,6 +16,7 @@ namespace Fantasy_Playoff_Machine
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+			ClientAssets.Initialize();
         }
     }
 }
