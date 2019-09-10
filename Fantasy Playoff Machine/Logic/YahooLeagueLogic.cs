@@ -15,7 +15,7 @@ namespace Fantasy_Playoff_Machine.Logic
 	{
 		private static string gameKey;
 
-		public static string GetYahooLeagueKey(int leagueId, YahooCredentials creds)
+		public static string GetYahooLeagueKey(long leagueId, YahooCredentials creds)
 		{
 			if (!string.IsNullOrEmpty(gameKey))
 				return gameKey + ".l." + leagueId;
@@ -44,7 +44,7 @@ namespace Fantasy_Playoff_Machine.Logic
 			}
 		}
 
-		public static EspnLeague CreateLeagueObject(int leagueId, YahooCredentials creds)
+		public static EspnLeague CreateLeagueObject(long leagueId, YahooCredentials creds)
 		{
 			//This all pains me because yahoo returns lists instead of objects
 			var leagueKey = GetYahooLeagueKey(leagueId, creds);

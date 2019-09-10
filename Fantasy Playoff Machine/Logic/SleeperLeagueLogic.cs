@@ -11,7 +11,7 @@ namespace Fantasy_Playoff_Machine.Logic
 {
 	public static class SleeperLeagueLogic
 	{
-		public static dynamic GetSleeperEndpoint(int leagueId, string suffixRoute = "")
+		public static dynamic GetSleeperEndpoint(long leagueId, string suffixRoute = "")
 		{
 			var client = new RestClient("https://api.sleeper.app/v1/");
 			var request = new RestRequest("league/" + leagueId + suffixRoute, Method.GET);
@@ -22,7 +22,7 @@ namespace Fantasy_Playoff_Machine.Logic
 			return result;
 		}
 
-		public static EspnLeague CreateLeagueObject(int leagueId)
+		public static EspnLeague CreateLeagueObject(long leagueId)
 		{
 			var result = GetSleeperEndpoint(leagueId);
 			var settings = result.settings;
@@ -49,8 +49,7 @@ namespace Fantasy_Playoff_Machine.Logic
 					foreach (var keys in GetPropertyKeysForDynamic(result.metadata))
 					{
 						var divisionPropName = "division_" + divisionId;
-						var propertyInfo = result.metadata.GetType().GetProperty(divisionPropName);
-						var value = propertyInfo.GetValue(result.metadata, null);
+						var value = result.metadata[divisionPropName];
 
 						finalSettings.Divisions.Add(new EspnDivision { ID = divisionId, Name = value, Teams = new List<EspnTeam>()});
 						divisionId++;
@@ -67,10 +66,10 @@ namespace Fantasy_Playoff_Machine.Logic
 			var completedSchedule = new List<EspnWeek>();
 
 			var users = GetSleeperEndpoint(leagueId, "/users");
-			var userToNameDictionary = new Dictionary<int,string>();
+			var userToNameDictionary = new Dictionary<string,string>();
 			foreach (var user in users)
 			{
-				userToNameDictionary.Add(user.user_id, user.metadata.team_name ?? user.display_name);
+				userToNameDictionary.Add(user.user_id.Value, user.metadata.team_name?.Value ?? user.display_name.Value);
 			}
 
 
@@ -84,21 +83,21 @@ namespace Fantasy_Playoff_Machine.Logic
 					divisionId = Convert.ToInt32(team.settings.division);
 				}
 
-				var division = finalSettings.Divisions.FirstOrDefault(_ => _.ID == team.divisionId.Value);
+				var division = finalSettings.Divisions.FirstOrDefault(_ => _.ID == divisionId);
 
 				var espnTeam = new EspnTeam
 				{
 					ID = team.roster_id,
 					Division = division.Name,
-					TeamName = userToNameDictionary[team.owner_id],
+					TeamName = userToNameDictionary[team.owner_id.Value],
 					Wins = team.settings.wins,
 					Losses = team.settings.losses,
 					Ties = team.settings.ties,
 					DivisionWins = 0,
 					DivisionLosses = 0,
 					DivisionTies = 0,
-					PointsFor = team.settings.ppts + (((decimal)team.settings.ppts_decimal)/100),
-					PointsAgainst = team.settings.fpts_against + (((decimal)team.settings.fpts_against_decimal) / 100)
+					PointsFor = team.settings.fpts ?? 0 + (((decimal)(team.settings.fpts_decimal ?? 0))/100),
+					PointsAgainst = team.settings.fpts_against ?? 0 + (((decimal)(team.settings.fpts_against_decimal ?? 0)) / 100)
 				};
 				
 				allTeams.Add(espnTeam);
@@ -108,31 +107,31 @@ namespace Fantasy_Playoff_Machine.Logic
 			for (int i = 1; i <= finalSettings.RegularSeasonWeeks; i++)
 			{
 				var matchups = GetSleeperEndpoint(leagueId, "/matchups/" + i);
-
+				var matchupDictionary = new Dictionary<long, EspnMatchupItem>();
 
 				foreach (var teamMatchup in matchups)
 				{
 					//TODO Not played yet
 					//The week hasn't happened yet
-					if (teamMatchup.points == null)
+					var x = teamMatchup.points.Value;
+					if (teamMatchup.points.Value == null)
 					{
 						var week = i;
 
 						//Check if the schedule knows about this week yet, if not add it
-						if (!completedSchedule.Any(_ => _.Week == week))
+						if (!remainingSchedule.Any(_ => _.Week == week))
 						{
-							completedSchedule.Add(new EspnWeek { Week = week, Matchups = new List<EspnMatchupItem>() });
+							remainingSchedule.Add(new EspnWeek { Week = week, Matchups = new List<EspnMatchupItem>() });
 						}
-						var scheduledWeek = completedSchedule.First(_ => _.Week == week);
+						var scheduledWeek = remainingSchedule.First(_ => _.Week == week);
 
-						var matchupDictionary = new Dictionary<int, EspnMatchupItem>();
-
+						
 						//If we already processed the other half
-						if (matchupDictionary.ContainsKey(teamMatchup.matchup_id))
+						if (matchupDictionary.ContainsKey((long)teamMatchup.matchup_id.Value))
 						{
 							//Set away team (aka we got to this one second)
-							var matchup = matchupDictionary[(int)teamMatchup.matchup_id];
-							var awayTeam = allTeams.First(_ => _.ID == teamMatchup.roster_id);
+							var matchup = matchupDictionary[(long)teamMatchup.matchup_id.Value];
+							var awayTeam = allTeams.First(_ => _.ID == teamMatchup.roster_id.Value);
 
 							matchup.AwayTeamName = awayTeam.TeamName;
 							scheduledWeek.Matchups.Add(matchup);
@@ -140,7 +139,7 @@ namespace Fantasy_Playoff_Machine.Logic
 						else
 						{
 							//This is the first time we are processing this matchup
-							var homeTeam = allTeams.First(_ => _.ID == teamMatchup.roster_id);
+							var homeTeam = allTeams.First(_ => _.ID == teamMatchup.roster_id.Value);
 
 							var matchup = new EspnMatchupItem
 							{
@@ -151,7 +150,8 @@ namespace Fantasy_Playoff_Machine.Logic
 								HomeTeamWon = false,
 								Tie = false
 							};
-							matchupDictionary.Add(teamMatchup.matchup_id, matchup);
+							long matchupId = teamMatchup.matchup_id.Value;
+							matchupDictionary.Add(matchupId, matchup);
 						}
 					}
 					else
@@ -165,14 +165,13 @@ namespace Fantasy_Playoff_Machine.Logic
 						}
 						var scheduledWeek = completedSchedule.First(_ => _.Week == week);
 
-						var matchupDictionary = new Dictionary<int, EspnMatchupItem>();
 
 						//If we already processed the other half
-						if (matchupDictionary.ContainsKey(teamMatchup.matchup_id))
+						if (matchupDictionary.ContainsKey(teamMatchup.matchup_id.Value))
 						{
 							//Set away team (aka we got to this one second)
-							var matchup = matchupDictionary[(int)teamMatchup.matchup_id];
-							var awayTeam = allTeams.First(_ => _.ID == teamMatchup.roster_id);
+							var matchup = matchupDictionary[teamMatchup.matchup_id.Value];
+							var awayTeam = allTeams.First(_ => _.ID == teamMatchup.roster_id.Value);
 
 							matchup.AwayTeamName = awayTeam.TeamName;
 							matchup.AwayTeamScore = teamMatchup.points;

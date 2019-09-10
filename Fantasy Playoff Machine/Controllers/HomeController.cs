@@ -36,7 +36,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 			return View();
 		}
 
-		public ActionResult PlayoffMachine(string site, int leagueId, string userId)
+		public ActionResult PlayoffMachine(string site, long leagueId, string userId)
 		{
 			if (site.ToLowerInvariant().Equals("yahoo"))
 			{
@@ -62,7 +62,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 			return View(GetLeagueData(data));
 		}
 
-		public ActionResult PlayoffOdds(string site, int leagueId, string userId)
+		public ActionResult PlayoffOdds(string site, long leagueId, string userId)
 		{
 			if (site.ToLowerInvariant().Equals("yahoo"))
 			{
@@ -88,7 +88,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 			return View(GetLeagueData(data));
 		}
 
-		public ActionResult PowerRankings(string site, int leagueId, string userId)
+		public ActionResult PowerRankings(string site, long leagueId, string userId)
 		{
 			if (site.ToLowerInvariant().Equals("yahoo"))
 			{
@@ -114,7 +114,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 			return View(GetLeagueData(data));
 		}
 		
-		public ActionResult VerifyLeagueExists(string site, int leagueId, string userId)
+		public ActionResult VerifyLeagueExists(string site, long leagueId, string userId)
 		{
 			if (site.ToLowerInvariant().Equals("yahoo"))
 			{
@@ -146,7 +146,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 			return Json(false, JsonRequestBehavior.AllowGet);
 		}
 
-		private string ExecuteYahooRequest(int leagueId, string userId)
+		private string ExecuteYahooRequest(long leagueId, string userId)
 		{
 			//Get access token and refresh token from DB
 			var creds = DatabaseLogic.GetYahooCredentials(userId);
@@ -162,7 +162,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 			return result;
 		}
 
-		private string ExecuteESPNRequest(int leagueId)
+		private string ExecuteESPNRequest(long leagueId)
 		{
 			var client = new RestClient("http://fantasy.espn.com/");
 			var request = new RestRequest("apis/v3/games/ffl/seasons/" + EspnLeagueLogic.GetEspnSeasonId() + "/segments/0/leagues/" + leagueId, Method.GET);
@@ -204,7 +204,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 
 
 		[HttpGet]
-		public ActionResult TestLeague(int leagueId, string s2, string swid)
+		public ActionResult TestLeague(long leagueId, string s2, string swid)
 		{
 			var result = ExecuteESPNRequest(leagueId, s2, swid);
 			var dynamicResult = JsonConvert.DeserializeObject<dynamic>(result);
@@ -215,7 +215,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 			return Json(league.LeagueSettings.LeagueName, JsonRequestBehavior.AllowGet);
 		}
 
-		private string ExecuteESPNRequest(int leagueId, string s2, string swid)
+		private string ExecuteESPNRequest(long leagueId, string s2, string swid)
 		{
 			var client = new RestClient("http://fantasy.espn.com/");
 			var request = new RestRequest("apis/v3/games/ffl/seasons/" + EspnLeagueLogic.GetEspnSeasonId() + "/segments/0/leagues/" + leagueId, Method.GET);

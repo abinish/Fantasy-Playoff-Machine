@@ -22,6 +22,8 @@
 					return "../Content/espnurl.PNG";
 				else if(selectedSite === "Yahoo")
 					return "../Content/yahoourl.PNG";
+				else if (selectedSite === "Sleeper")
+					return "../Content/sleeperUrl.png";
 				return "";
 			}
 
