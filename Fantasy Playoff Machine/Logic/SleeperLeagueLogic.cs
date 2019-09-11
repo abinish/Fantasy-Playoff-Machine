@@ -174,7 +174,7 @@ namespace Fantasy_Playoff_Machine.Logic
 							var awayTeam = allTeams.First(_ => _.ID == teamMatchup.roster_id.Value);
 
 							matchup.AwayTeamName = awayTeam.TeamName;
-							matchup.AwayTeamScore = teamMatchup.points;
+							matchup.AwayTeamScore = teamMatchup.points.Value;
 
 							matchup.AwayTeamWon = matchup.AwayTeamScore > matchup.HomeTeamScore;
 							matchup.HomeTeamWon = matchup.HomeTeamScore > matchup.AwayTeamScore;
@@ -186,26 +186,24 @@ namespace Fantasy_Playoff_Machine.Logic
 						else
 						{
 							//This is the first time we are processing this matchup
-							var homeTeam = allTeams.First(_ => _.ID == teamMatchup.roster_id);
+							var homeTeam = allTeams.First(_ => _.ID == teamMatchup.roster_id.Value);
 
 							var matchup = new EspnMatchupItem
 							{
 								AwayTeamName = "",
 								AwayTeamScore = 0,
 								HomeTeamName = homeTeam.TeamName,
-								HomeTeamScore = teamMatchup.points,
+								HomeTeamScore = teamMatchup.points.Value,
 								NoWinnerSelected = false,
 								AwayTeamWon = false,
 								HomeTeamWon = false,
 								Tie = false
 							};
-							matchupDictionary.Add(teamMatchup.matchup_id, matchup);
+							matchupDictionary.Add(teamMatchup.matchup_id.Value, matchup);
 						}
 					}
 				}
 			}
-
-
 
 			return new EspnLeague { LeagueSettings = finalSettings, RemainingSchedule = remainingSchedule, CompletedSchedule = completedSchedule, Site = "sleeper" };
 		}
