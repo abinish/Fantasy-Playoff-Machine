@@ -156,6 +156,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\espnurl.PNG" />
     <Content Include="Content\FFHub.css" />
+    <Content Include="Content\sleeperUrl.png" />
     <Content Include="Content\yahooUrl.PNG" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

@@ -1,6 +1,30 @@
 ﻿<script language="JavaScript">
 	window.__preloadedData.YahooUserGuid = @Html.Raw("'" + ViewBag.YahooUserGuid + "'");
 	document.write("<base href='https://" + document.location.host + "' />");
+
+	function tryGetEspnCreds(retry, callback) {
+		try {
+			espnSWIDRequest(function (val) {
+				window.__preloadedData.swid = val;
+				espnS2Request(function (val) {
+					window.__preloadedData.s2 = val;
+					callback();
+				});
+			});
+		} catch (err) {
+			if (!retry) {
+				callback();
+			}
+			else
+			{
+				setTimeout(function () { tryGetEspnCreds(false, callback); }, 1000);
+			}
+		}
+	}
+
+	//document.addEventListener('DOMContentLoaded', function () {
+	//	runRequest(true);
+	//});
 </script>
 
 <div ng-controller="IndexController" ng-cloak>

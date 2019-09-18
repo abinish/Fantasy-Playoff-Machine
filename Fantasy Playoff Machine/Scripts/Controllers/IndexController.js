@@ -31,6 +31,30 @@
 				return $scope.selectedSite === "Yahoo" && !$scope.yahooUserId;
 			};
 
+			var showPrivateLeagueSettings = function() {
+				//Show tips for doing private leagues
+				$scope.showPrivateLeagueSettings = true;
+				$scope.privateLeagueUri = "http://fantasy.espn.com/apis/v3/games/ffl/seasons/" +
+					getSeasonId() +
+					"/segments/0/leagues/" +
+					$scope.leagueIDToAdd +
+					"?view=mMatchupScore&view=mTeam&view=mSettings";
+				$scope.$apply();
+			}
+
+			var privateLeagueCallback = function() {
+
+				var swid = preloadService.GetPreloadedData("swid")
+				var s2 = preloadService.GetPreloadedData("s2");
+				if (swid && s2) {
+					$scope.swid = swid;
+					$scope.s2 = s2;
+
+				} else {
+					showPrivateLeagueSettings();
+				}
+			};
+
 			$scope.addLeague = function () {
 				//Make call to service to check if it works
 				$http.get("/Home/VerifyLeagueExists?site=" + $scope.selectedSite + "&leagueId=" + $scope.leagueIDToAdd + "&userId=" + $scope.yahooUserId)
@@ -48,9 +72,13 @@
 							$scope.showPrivateLeagueSettings = false;
 						}
 						else if ($scope.selectedSite === "ESPN") {
-							//Show tips for doing private leagues
-							$scope.showPrivateLeagueSettings = true;
-							$scope.privateLeagueUri = "http://fantasy.espn.com/apis/v3/games/ffl/seasons/" + getSeasonId() + "/segments/0/leagues/" + $scope.leagueIDToAdd + "view=mMatchupScore&view=mTeam";
+							showPrivateLeagueSettings();
+							//if (!$scope.swid && !$scope.s2) {
+							//	tryGetEspnCreds(true, privateLeagueCallback);
+							//} else {
+							//	showPrivateLeagueSettings();
+							//}
+
 						} else {
 							alert("We could not properly load the league.  If you have questions, email support@theffhub.com");
 						}
@@ -89,6 +117,21 @@
 					domain: getDomain()
 				});
 			};
+
+			$scope.saveEspnCreds = function() {
+				var data = $cookies.getObject("data");
+
+				if (!data) {
+					data = {
+						yahooUserId: '',
+						leagues: []
+					};
+				}
+				data.s2 = $scope.s2;
+				data.swid = $scope.swid;
+
+				$scope.saveCookie(data);
+			}
 
 			$scope.addLeagueToCookieAndPage = function (leagueToAdd) {
 				var data = $cookies.getObject("data");
@@ -136,6 +179,8 @@
 				if (data) {
 					$scope.leagues = data.leagues;
 					$scope.yahooUserId = data.yahooUserId;
+					$scope.s2 = data.s2;
+					$scope.swid = data.swid;
 				}
 			};
 
