@@ -39,7 +39,7 @@
 					"/segments/0/leagues/" +
 					$scope.leagueIDToAdd +
 					"?view=mMatchupScore&view=mTeam&view=mSettings";
-				$scope.$apply();
+				//$scope.$apply();
 			}
 
 			var privateLeagueCallback = function() {
@@ -49,6 +49,7 @@
 				if (swid && s2) {
 					$scope.swid = swid;
 					$scope.s2 = s2;
+					$scope.saveEspnCreds();
 
 				} else {
 					showPrivateLeagueSettings();
@@ -57,7 +58,7 @@
 
 			$scope.addLeague = function () {
 				//Make call to service to check if it works
-				$http.get("/Home/VerifyLeagueExists?site=" + $scope.selectedSite + "&leagueId=" + $scope.leagueIDToAdd + "&userId=" + $scope.yahooUserId)
+				$http.get("/Home/VerifyLeagueExists?site=" + $scope.selectedSite + "&leagueId=" + $scope.leagueIDToAdd + "&userId=" + $scope.yahooUserId + "&s2=" + $scope.s2 + "&swid=" + $scope.swid)
 					.then(function (data) {
 
 						if (data.data) {
@@ -72,12 +73,12 @@
 							$scope.showPrivateLeagueSettings = false;
 						}
 						else if ($scope.selectedSite === "ESPN") {
-							showPrivateLeagueSettings();
-							//if (!$scope.swid && !$scope.s2) {
-							//	tryGetEspnCreds(true, privateLeagueCallback);
-							//} else {
-							//	showPrivateLeagueSettings();
-							//}
+							//showPrivateLeagueSettings();
+							if (!$scope.swid && !$scope.s2) {
+								tryGetEspnCreds(false, privateLeagueCallback);
+							} else {
+								showPrivateLeagueSettings();
+							}
 
 						} else {
 							alert("We could not properly load the league.  If you have questions, email support@theffhub.com");
@@ -151,7 +152,7 @@
 			};
 
 			$scope.generateLeagueDataUrl = function (league) {
-				return "http://fantasy.espn.com/apis/v3/games/ffl/seasons/" + getSeasonId() + "/segments/0/leagues/" + league.ID + "view=mMatchupScore&view=mTeam";
+				return "http://fantasy.espn.com/apis/v3/games/ffl/seasons/" + getSeasonId() + "/segments/0/leagues/" + league.ID + "view=mMatchupScore&view=mTeam&view=mSettings";
 			}
 
 			var getSeasonId = function () {
