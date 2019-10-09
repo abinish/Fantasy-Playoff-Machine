@@ -77,6 +77,10 @@ namespace Fantasy_Playoff_Machine.Logic
 
 			foreach (var team in teamsResult)
 			{
+				//For some reason it can come back with a null roster?
+				if (team.owner_id.Value == null)
+					continue;
+
 				var divisionId = 1;
 				if (finalSettings.Divisions.Count() != 1)
 				{
@@ -111,6 +115,10 @@ namespace Fantasy_Playoff_Machine.Logic
 
 				foreach (var teamMatchup in matchups)
 				{
+					//Apparently sleeper allows for teams to be returned that aren't real teams.
+					var matchupMatchesTeam = allTeams.FirstOrDefault(_ => _.ID == teamMatchup.roster_id.Value);
+					if (matchupMatchesTeam == null)
+						continue;
 					//TODO Not played yet
 					//The week hasn't happened yet
 					var x = teamMatchup.points.Value;
