@@ -96,6 +96,13 @@ namespace Fantasy_Playoff_Machine.Logic
 				//The week hasn't happened yet
 				if (matchup.winner.Value.Equals("UNDECIDED"))
 				{
+					var away = matchup?.away;
+					var home = matchup?.home;
+
+					//If one of them is null, then its a bye week
+					if (away == null || home == null)
+						continue;
+
 					var week = matchup.matchupPeriodId;
 					//Check if the schedule knows about this week yet, if not add it
 					if (!remainingSchedule.Any(_ => _.Week == week.Value))
@@ -104,6 +111,8 @@ namespace Fantasy_Playoff_Machine.Logic
 					}
 
 					var scheduledWeek = remainingSchedule.First(_ => _.Week == week.Value);
+
+					
 
 					var awayTeam = allTeams.First(_ => _.ID == matchup.away.teamId.Value);
 					var homeTeam = allTeams.First(_ => _.ID == matchup.home.teamId.Value);
