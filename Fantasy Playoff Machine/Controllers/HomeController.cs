@@ -113,7 +113,33 @@ namespace Fantasy_Playoff_Machine.Controllers
 			//This can only be ESPN Leagues
 			return View(GetLeagueData(data));
 		}
-		
+
+		public ActionResult Scheduler(string site, long leagueId, string userId, string s2, string swid)
+		{
+			if (site.ToLowerInvariant().Equals("yahoo"))
+			{
+				var creds = DatabaseLogic.GetYahooCredentials(userId);
+				if (creds.IsExpired)
+					creds = AuthController.GetAccessTokenFromRefreshToken(creds);
+
+				return View(YahooLeagueLogic.CreateLeagueObject(leagueId, creds));
+			}
+			else if (site.ToLowerInvariant().Equals("sleeper"))
+			{
+				return View(SleeperLeagueLogic.CreateLeagueObject(leagueId));
+			}
+
+			// If not yahoo then assume espn
+			return View(GetLeagueData(ExecuteESPNRequest(leagueId, s2, swid)));
+		}
+
+		[HttpPost]
+		public ActionResult Scheduler(string data)
+		{
+			//This can only be ESPN Leagues
+			return View(GetLeagueData(data));
+		}
+
 		public ActionResult VerifyLeagueExists(string site, long leagueId, string userId, string s2, string swid)
 		{
 			if (site.ToLowerInvariant().Equals("yahoo"))

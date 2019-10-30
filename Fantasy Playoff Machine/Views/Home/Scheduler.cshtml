@@ -5,41 +5,52 @@
 </script>
 
 <div ng-controller="SchedulerController" ng-cloak>
-	<!--Divisions-->
+	<br />
+	<h2>Schedule Comparisons</h2>
 	<div>
 		<table class="table">
-			<tr>
-				<td ng-repeat="division in league.LeagueSettings.Divisions">
-					<h2>{{division.Name}}</h2>
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Team Name</th>
-								<th>Wins</th>
-								<th>Losses</th>
-								<th>Ties</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-class="getTeamClass(team)" ng-repeat="team in division.Teams | orderBy:dynamicStandings">
-								<td>
-									<div ng-show="team.Tiebreakers.length === 0">
-										{{team.TeamName}}
-									</div>
-									<div ng-show="team.Tiebreakers.length > 0" class="test-tooltip" data-html="true" data-tooltip="{{generateTiebreakerHtml(team.Tiebreakers)}}">
-										{{team.TeamName}}<i class="fa fa-info" aria-hidden="true" style="padding-left:5px"></i>
-									</div>
+			<thead>
+				<tr>
+					<th></th>
+					<th>Vs Who's Schedule</th>
+				</tr>
+				<tr>
+					<th colspan="1">Teams</th>
+					<th style="text-align:center" ng-repeat="team in teams">{{team.TeamName}}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="team in teams">
+					<td>{{team.TeamName}}</td>
+					<td style="text-align:center" ng-repeat="opposingTeam in teams track by $index">{{getRecord(team, teams[$index])}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<br />
+	<br />
 
-
-								</td>
-								<td>{{team.Wins}}</td>
-								<td>{{team.Losses}}</td>
-								<td>{{team.Ties}}</td>
-							</tr>
-						</tbody>
-					</table>
-				</td>
-			</tr>
+	<h2>Weekly Records vs All Teams</h2>
+	<div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th></th>
+					<th style="text-align:center">Week</th>
+				</tr>
+				<tr>
+					<th>Team Name</th>
+					<th style="text-align:center" ng-repeat="week in league.CompletedSchedule track by $index">{{$index + 1}}</th>
+					<th style="text-align:center">Total</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="team in teams | orderBy:getTotalWinPercentage: true">
+					<td>{{team.TeamName}}</td>
+					<td style="text-align:center" ng-repeat="week in league.CompletedSchedule | orderBy:weekId">{{getWeeklyRecord(team, week)}}</td>
+					<td style="text-align:center">{{getTotalRecord(team)}}</td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 </div>

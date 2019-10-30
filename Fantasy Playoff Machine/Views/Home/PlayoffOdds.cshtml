@@ -11,7 +11,7 @@
 			<thead>
 				<tr>
 					<th>Team Name</th>
-					<th style="text-align:center" ng-repeat="team in teams track by $index">{{$index + 1}}</th>
+					<th style="text-align:center" ng-repeat="team in teams track by $index">{{placeFormatter($index + 1)}}</th>
 					<th style="text-align:center">Total</th>
 				</tr>
 			</thead>
