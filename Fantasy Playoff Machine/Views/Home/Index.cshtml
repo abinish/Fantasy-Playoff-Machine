@@ -28,9 +28,9 @@
 </script>
 
 <div ng-controller="IndexController" ng-cloak>
-	<br/>
+	<br />
 	<div ng-show="leagues.length === 0">
-			<button ng-click="demo()" class="btn btn-primary">Try a demo</button>
+		<button ng-click="demo()" class="btn btn-primary">Try a demo</button>
 
 		<h2>or Setup your profile:</h2>
 	</div>
@@ -47,8 +47,10 @@
 				<br />
 				<a href="Home/Scheduler?site={{league.Site}}&leagueId={{league.ID}}&userId={{yahooUserId}}&s2={{s2}}&swid={{swid}}" ng-show="!league.PrivateLeague">Schedule Comparison</a>
 				<br />
+				<a href="Home/WeeklyOdds?site={{league.Site}}&leagueId={{league.ID}}&userId={{yahooUserId}}&s2={{s2}}&swid={{swid}}" ng-show="!league.PrivateLeague">Weekly Odds</a>
+				<br />
 			</div>
-			<br/>
+			<br />
 		</div>
 
 		<h2>Add another league</h2>
@@ -92,13 +94,17 @@
 				</form>
 				<form action="Home/Scheduler" method="post" id="lowerPO" target="_blank">
 					<input type="text" name="data" ng-model="privateLeagueDataToAdd" ng-show="false" />
-					<a onclick="document.forms['lowerPO'].submit(); return false;" style="cursor: pointer">Playoff Odds</a>
+					<a onclick="document.forms['lowerPO'].submit(); return false;" style="cursor: pointer">Schedule Comparison</a>
+				</form>
+				<form action="Home/WeeklyOdds" method="post" id="lowerPO" target="_blank">
+					<input type="text" name="data" ng-model="privateLeagueDataToAdd" ng-show="false" />
+					<a onclick="document.forms['lowerPO'].submit(); return false;" style="cursor: pointer">Weekly Odds</a>
 				</form>
 			</div>
 		</div>
 	</div>
 
-	<div  ng-show="leagues.length !== 0" style="position:fixed;bottom:50px;width:100%">
+	<div ng-show="leagues.length !== 0" style="position:fixed;bottom:50px;width:100%">
 		Questions? Comments? Reach out to my reddit account <a href="https://www.reddit.com/user/justlikepudge">justlikepudge</a>
 	</div>
 </div>

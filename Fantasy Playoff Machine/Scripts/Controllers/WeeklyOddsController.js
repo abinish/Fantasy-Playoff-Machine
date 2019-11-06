@@ -8,42 +8,21 @@
 			$scope.iterations = 4000;
 
 
-			$scope.getOddsColumnClass = function (place) {
-				if (place <= $scope.league.LeagueSettings.PlayoffTeams - 1)
+
+			$scope.getAwayMatchupClass = function (matchup) {
+				if ($scope.getAwayWinPercentage(matchup) > 50)
 					return "success";
 
 				return "";
 			}
 
-			$scope.getOddsValue = function (team, place) {
-				return Math.round($scope.results[team.TeamName][place] * 100) / 100;
+			$scope.getHomeMatchupClass = function (matchup) {
+				if ($scope.getHomeWinPercentage(matchup) > 50)
+					return "success";
+
+				return "";
 			}
-
-			$scope.getTotalOddsValue = function (team) {
-				var playoffOdds = 0;
-
-				for (var i = 0; i <= $scope.league.LeagueSettings.PlayoffTeams - 1; i++) {
-					playoffOdds += $scope.results[team.TeamName][i];
-				}
-
-				return Math.round(playoffOdds * 100) / 100;
-			}
-
-			$scope.getTotalOddsSortValue = function (team) {
-				var playoffOdds = 0;
-				var positionalOdds = 0;
-
-				for (var i = 0; i <= $scope.results[team.TeamName].length - 1; i++) {
-
-					if (i <= $scope.league.LeagueSettings.PlayoffTeams - 1)
-						playoffOdds += $scope.results[team.TeamName][i];
-
-					positionalOdds += ($scope.results[team.TeamName][i] / (i + 1));
-				}
-
-				return (playoffOdds * 100) + positionalOdds;
-			}
-
+			
 			for (var i = 0; i < $scope.league.LeagueSettings.Divisions.length; i++) {
 				var x = $scope.league.LeagueSettings.Divisions[i];
 				for (var j = 0; j < x.Teams.length; j++) {
@@ -146,7 +125,7 @@
 							if (week.Matchups[i].HomeTeamName === team.TeamName)
 								return week.Matchups[i].HomeTeamScore;
 						}
-					}).filter(n => n).sort().slice(1, -1);
+					}).filter(n => n).sort();
 					if (team.filteredScores.length !== 0) {
 						team.averageScore = math.mean(team.filteredScores);
 						team.standardDeviation = Math.round(math.std(team.filteredScores));

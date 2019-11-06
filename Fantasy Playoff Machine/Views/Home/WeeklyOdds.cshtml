@@ -31,15 +31,15 @@
 					</thead>
 					<tbody>
 						<tr ng-repeat="matchup in week.Matchups">
-							<td>{{getAverageScore(matchup.AwayTeamName)}}</td>
-							<td>{{getStandardDeviation(matchup.AwayTeamName)}}</td>
-							<td>{{matchup.AwayTeamName}}</td>
-							<td>{{getAwayWinPercentage(matchup)}}</td>
+							<td ng-class="getAwayMatchupClass(matchup)">{{getAverageScore(matchup.AwayTeamName)}}</td>
+							<td ng-class="getAwayMatchupClass(matchup)">{{getStandardDeviation(matchup.AwayTeamName)}}</td>
+							<td ng-class="getAwayMatchupClass(matchup)">{{matchup.AwayTeamName}}</td>
+							<td ng-class="getAwayMatchupClass(matchup)">{{getAwayWinPercentage(matchup)}}</td>
 							<td>VS.</td>
-							<td>{{getHomeWinPercentage(matchup)}}</td>
-							<td>{{matchup.HomeTeamName}}</td>
-							<td>{{getStandardDeviation(matchup.HomeTeamName)}}</td>
-							<td>{{getAverageScore(matchup.HomeTeamName)}}</td>
+							<td ng-class="getHomeMatchupClass(matchup)">{{getHomeWinPercentage(matchup)}}</td>
+							<td ng-class="getHomeMatchupClass(matchup)">{{matchup.HomeTeamName}}</td>
+							<td ng-class="getHomeMatchupClass(matchup)">{{getStandardDeviation(matchup.HomeTeamName)}}</td>
+							<td ng-class="getHomeMatchupClass(matchup)">{{getAverageScore(matchup.HomeTeamName)}}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -47,5 +47,5 @@
 		</div>
 	</div>
 
-	*Note: This odds are calculated purely from the history of each team's scores this year (excluding the high and low scores to try and remove outliers).  It does not take projections or byes into account.  It uses that data to run 4000 monte carlo simulations of each matchup.
+	*Note: These odds are calculated purely from the history of each team's scores this year.  It does not take projections or byes into account.  It uses that data to run 4000 monte carlo simulations of each matchup.
 </div>

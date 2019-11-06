@@ -616,7 +616,7 @@
 							if (week.Matchups[i].HomeTeamName === team.TeamName)
 								return week.Matchups[i].HomeTeamScore;
 						}
-					}).filter(n => n).sort().slice(1, -1);
+					}).filter(n => n).sort();
 					if (team.filteredScores.length !== 0) {
 						team.averageScore = math.mean(team.filteredScores);
 						team.standardDeviation = Math.round(math.std(team.filteredScores));
