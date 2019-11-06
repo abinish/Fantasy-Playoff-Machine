@@ -165,6 +165,7 @@
     <Content Include="Scripts\app.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\Controllers\WeeklyOddsController.js" />
     <Content Include="Scripts\Controllers\TestController.js" />
     <Content Include="Scripts\Controllers\SchedulerController.js" />
     <Content Include="Scripts\Controllers\PlayoffOddsController.js" />
@@ -215,6 +216,7 @@
     <Content Include="Views\Home\Support.cshtml" />
     <Content Include="Views\Home\Suggestions.cshtml" />
     <Content Include="Views\Home\Account.cshtml" />
+    <Content Include="Views\Home\WeeklyOdds.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.4.19\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />

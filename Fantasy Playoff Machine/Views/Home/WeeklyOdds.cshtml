@@ -1,0 +1,51 @@
+﻿@model Fantasy_Playoff_Machine.Models.EspnLeague
+
+<script language="JavaScript">
+    window.__preloadedData.League = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+</script>
+
+<div ng-controller="WeeklyOddsController" ng-cloak>
+	<br />
+	<h2>Weekly Odds</h2>
+	<br />
+	<!--Remaining Weeks-->
+	<div>
+		<ul class="nav nav-tabs">
+			<li class="" ng-repeat="week in league.RemainingSchedule" ng-class="{active: $index == 0}"><a href="#{{week.Week}}" data-toggle="tab" aria-expanded="true">Week {{week.Week}}</a></li>
+		</ul>
+		<div id="myTabContent" class="tab-content">
+			<div class="tab-pane fade" id="{{week.Week}}" ng-class="{'active in': $index == 0}" ng-repeat="week in league.RemainingSchedule">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Average Score</th>
+							<th>Standard deviation on scores</th>
+							<th>Team Name</th>
+							<th>Win %</th>
+							<th></th>
+							<th>Win %</th>
+							<th>Team Name</th>
+							<th>Standard deviation on scores</th>
+							<th>Average Score</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="matchup in week.Matchups">
+							<td>{{getAverageScore(matchup.AwayTeamName)}}</td>
+							<td>{{getStandardDeviation(matchup.AwayTeamName)}}</td>
+							<td>{{matchup.AwayTeamName}}</td>
+							<td>{{getAwayWinPercentage(matchup)}}</td>
+							<td>VS.</td>
+							<td>{{getHomeWinPercentage(matchup)}}</td>
+							<td>{{matchup.HomeTeamName}}</td>
+							<td>{{getStandardDeviation(matchup.HomeTeamName)}}</td>
+							<td>{{getAverageScore(matchup.HomeTeamName)}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	*Note: This odds are calculated purely from the history of each team's scores this year (excluding the high and low scores to try and remove outliers).  It does not take projections or byes into account.  It uses that data to run 4000 monte carlo simulations of each matchup.
+</div>

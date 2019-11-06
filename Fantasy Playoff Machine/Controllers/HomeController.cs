@@ -38,21 +38,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 
 		public ActionResult PlayoffMachine(string site, long leagueId, string userId, string s2, string swid)
 		{
-			if (site.ToLowerInvariant().Equals("yahoo"))
-			{
-				var creds = DatabaseLogic.GetYahooCredentials(userId);
-				if (creds.IsExpired)
-					creds = AuthController.GetAccessTokenFromRefreshToken(creds);
-
-				return View(YahooLeagueLogic.CreateLeagueObject(leagueId, creds));
-			}
-			else if (site.ToLowerInvariant().Equals("sleeper"))
-			{
-				return View(SleeperLeagueLogic.CreateLeagueObject(leagueId));
-			}
-
-			// If not yahoo then assume espn
-			return View(GetLeagueData(ExecuteESPNRequest(leagueId, s2, swid)));
+			return View(GetLeague(site, leagueId, userId, s2, swid));
 		}
 
 		[HttpPost]
@@ -64,21 +50,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 
 		public ActionResult PlayoffOdds(string site, long leagueId, string userId, string s2, string swid)
 		{
-			if (site.ToLowerInvariant().Equals("yahoo"))
-			{
-				var creds = DatabaseLogic.GetYahooCredentials(userId);
-				if (creds.IsExpired)
-					creds = AuthController.GetAccessTokenFromRefreshToken(creds);
-
-				return View(YahooLeagueLogic.CreateLeagueObject(leagueId, creds));
-			}
-			else if (site.ToLowerInvariant().Equals("sleeper"))
-			{
-				return View(SleeperLeagueLogic.CreateLeagueObject(leagueId));
-			}
-
-			// If not yahoo then assume espn
-			return View(GetLeagueData(ExecuteESPNRequest(leagueId, s2, swid)));
+			return View(GetLeague(site, leagueId, userId, s2, swid));
 		}
 
 		[HttpPost]
@@ -90,21 +62,7 @@ namespace Fantasy_Playoff_Machine.Controllers
 
 		public ActionResult PowerRankings(string site, long leagueId, string userId, string s2, string swid)
 		{
-			if (site.ToLowerInvariant().Equals("yahoo"))
-			{
-				var creds = DatabaseLogic.GetYahooCredentials(userId);
-				if (creds.IsExpired)
-					creds = AuthController.GetAccessTokenFromRefreshToken(creds);
-
-				return View(YahooLeagueLogic.CreateLeagueObject(leagueId, creds));
-			}
-			else if (site.ToLowerInvariant().Equals("sleeper"))
-			{
-				return View(SleeperLeagueLogic.CreateLeagueObject(leagueId));
-			}
-			
-			// If not yahoo then assume espn
-			return View(GetLeagueData(ExecuteESPNRequest(leagueId, s2, swid)));
+			return View(GetLeague(site, leagueId, userId, s2, swid));
 		}
 
 		[HttpPost]
@@ -116,25 +74,23 @@ namespace Fantasy_Playoff_Machine.Controllers
 
 		public ActionResult Scheduler(string site, long leagueId, string userId, string s2, string swid)
 		{
-			if (site.ToLowerInvariant().Equals("yahoo"))
-			{
-				var creds = DatabaseLogic.GetYahooCredentials(userId);
-				if (creds.IsExpired)
-					creds = AuthController.GetAccessTokenFromRefreshToken(creds);
-
-				return View(YahooLeagueLogic.CreateLeagueObject(leagueId, creds));
-			}
-			else if (site.ToLowerInvariant().Equals("sleeper"))
-			{
-				return View(SleeperLeagueLogic.CreateLeagueObject(leagueId));
-			}
-
-			// If not yahoo then assume espn
-			return View(GetLeagueData(ExecuteESPNRequest(leagueId, s2, swid)));
+			return View(GetLeague(site, leagueId, userId, s2, swid));
 		}
 
 		[HttpPost]
 		public ActionResult Scheduler(string data)
+		{
+			//This can only be ESPN Leagues
+			return View(GetLeagueData(data));
+		}
+
+		public ActionResult WeeklyOdds(string site, long leagueId, string userId, string s2, string swid)
+		{
+			return View(GetLeague(site, leagueId, userId, s2, swid));
+		}
+
+		[HttpPost]
+		public ActionResult WeeklyOdds(string data)
 		{
 			//This can only be ESPN Leagues
 			return View(GetLeagueData(data));
@@ -194,6 +150,25 @@ namespace Fantasy_Playoff_Machine.Controllers
 
 			var league = EspnLeagueLogic.CreateLeagueObject(result);
 			return league;
+		}
+		
+		public EspnLeague GetLeague(string site, long leagueId, string userId, string s2, string swid)
+		{
+			if (site.ToLowerInvariant().Equals("yahoo"))
+			{
+				var creds = DatabaseLogic.GetYahooCredentials(userId);
+				if (creds.IsExpired)
+					creds = AuthController.GetAccessTokenFromRefreshToken(creds);
+
+				return YahooLeagueLogic.CreateLeagueObject(leagueId, creds);
+			}
+			else if (site.ToLowerInvariant().Equals("sleeper"))
+			{
+				return SleeperLeagueLogic.CreateLeagueObject(leagueId);
+			}
+
+			// If not yahoo then assume espn
+			return GetLeagueData(ExecuteESPNRequest(leagueId, s2, swid));
 		}
 
 		[HttpGet]
