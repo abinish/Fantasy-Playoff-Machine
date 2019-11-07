@@ -50,6 +50,8 @@ namespace Fantasy_Playoff_Machine.Logic
 					{
 						var divisionPropName = "division_" + divisionId;
 						var value = result.metadata[divisionPropName];
+						if (value == null)
+							continue;
 
 						finalSettings.Divisions.Add(new EspnDivision { ID = divisionId, Name = value, Teams = new List<EspnTeam>()});
 						divisionId++;
