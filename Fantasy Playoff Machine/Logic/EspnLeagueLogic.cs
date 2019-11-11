@@ -68,15 +68,43 @@ namespace Fantasy_Playoff_Machine.Logic
 			var remainingSchedule = new List<EspnWeek>();
 			var completedSchedule = new List<EspnWeek>();
 
+			var sharedNames = new List<string>();
+			var nonSharedNames = new List<string>();
+			foreach (var team in result.teams)
+			{
+				var teamName = team.location.Value + " " + team.nickname.Value;
+
+				if(sharedNames.Contains(teamName))
+					continue;
+
+				if (nonSharedNames.Contains(teamName))
+				{
+					sharedNames.Add(teamName);
+				}
+				else
+				{
+					nonSharedNames.Add(teamName);
+				}
+			}
+			
+
 			foreach (var team in result.teams)
 			{
 				var division = finalSettings.Divisions.FirstOrDefault(_ => _.ID == team.divisionId.Value);
+
+				var user = "";
+				if (sharedNames.Contains(team.location.Value + " " + team.nickname.Value))
+				{
+					var members = result.members;
+					var userObj = ((IEnumerable<dynamic>)members).Cast<dynamic>().FirstOrDefault(_ => _.id == team.primaryOwner);
+					user = " (" + userObj.firstName + " " + userObj.lastName + ")";
+				}
 
 				var espnTeam = new EspnTeam
 				{
 					ID = team.id,
 					Division = division.Name,
-					TeamName = team.location + " " + team.nickname,
+					TeamName = team.location + " " + team.nickname + user,
 					Wins = team.record.overall.wins,
 					Losses = team.record.overall.losses,
 					Ties = team.record.overall.ties,
@@ -90,6 +118,8 @@ namespace Fantasy_Playoff_Machine.Logic
 				allTeams.Add(espnTeam);
 				division.Teams.Add(espnTeam);
 			}
+
+
 
 			foreach (var matchup in result.schedule)
 			{
