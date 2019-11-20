@@ -96,6 +96,18 @@ namespace Fantasy_Playoff_Machine.Controllers
 			return View(GetLeagueData(data));
 		}
 
+		public ActionResult PlayoffMaker(string site, long leagueId, string userId, string s2, string swid)
+		{
+			return View(GetLeague(site, leagueId, userId, s2, swid));
+		}
+
+		[HttpPost]
+		public ActionResult PlayoffMaker(string data)
+		{
+			//This can only be ESPN Leagues
+			return View(GetLeagueData(data));
+		}
+
 		public ActionResult VerifyLeagueExists(string site, long leagueId, string userId, string s2, string swid)
 		{
 			if (site.ToLowerInvariant().Equals("yahoo"))

@@ -604,6 +604,10 @@ table td[class*="col-"], table th[class*="col-"] {
 	background-color: #e8e8e8
 }
 
+.table > thead > tr > .secondary, .table > tbody > tr > .secondary, .table > tfoot > tr > .secondary, .table > thead > .secondary > td, .table > tbody > .secondary > td, .table > tfoot > .secondary > td, .table > thead > .secondary > th, .table > tbody > .success > th, .table > tfoot > .secondary > th {
+	background-color: #d6d9db
+}
+
 .table > thead > tr > .success, .table > tbody > tr > .success, .table > tfoot > tr > .success, .table > thead > .success > td, .table > tbody > .success > td, .table > tfoot > .success > td, .table > thead > .success > th, .table > tbody > .success > th, .table > tfoot > .success > th {
 	background-color: #dff0d8
 }

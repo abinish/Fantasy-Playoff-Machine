@@ -22,7 +22,7 @@
 			<tbody>
 				<tr ng-repeat="team in teams">
 					<td>{{team.TeamName}}</td>
-					<td style="text-align:center" ng-repeat="opposingTeam in teams track by $index">{{getRecord(team, teams[$index])}}</td>
+					<td style="text-align:center" ng-class="getRecordColumnClass(team, teams[$index])" ng-repeat="opposingTeam in teams track by $index">{{getRecord(team, teams[$index])}}</td>
 				</tr>
 			</tbody>
 		</table>
