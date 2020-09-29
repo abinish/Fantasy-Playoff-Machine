@@ -114,6 +114,12 @@ namespace Fantasy_Playoff_Machine.Logic
 			{
 				var matchups = GetSleeperEndpoint(leagueId, "/matchups/" + i);
 				var matchupDictionary = new Dictionary<long, EspnMatchupItem>();
+				var weekCompleted = false;
+				foreach (var matchup in matchups)
+				{
+					if (matchup.points.Value != 0.0)
+						weekCompleted = true;
+				}
 
 				foreach (var teamMatchup in matchups)
 				{
@@ -124,7 +130,7 @@ namespace Fantasy_Playoff_Machine.Logic
 					//TODO Not played yet
 					//The week hasn't happened yet
 					var x = teamMatchup.points.Value;
-					if (teamMatchup.points.Value == null)
+					if (teamMatchup.points.Value == null || !weekCompleted)
 					{
 						var week = i;
 

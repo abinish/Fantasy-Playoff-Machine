@@ -16,9 +16,10 @@ namespace Fantasy_Playoff_Machine
 
             bundles.Add(new ScriptBundle("~/bundles/scripts")
                 .IncludeDirectory("~/Scripts/", "app.js")
-                .IncludeDirectory("~/Scripts/Controllers", "*.js")
-                //.IncludeDirectory("~/Scripts/Directives", "*.js", true)
-                .IncludeDirectory("~/Scripts/Services", "*.js"));
+				.IncludeDirectory("~/Scripts/Controllers", "*.js")
+                .IncludeDirectory("~/Scripts/dist", "*.js")
+				//.IncludeDirectory("~/Scripts/Directives", "*.js", true)
+				.IncludeDirectory("~/Scripts/Services", "*.js"));
             BundleTable.EnableOptimizations = false;
         }
     }

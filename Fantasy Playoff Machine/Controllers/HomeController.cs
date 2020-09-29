@@ -201,6 +201,12 @@ namespace Fantasy_Playoff_Machine.Controllers
 			return View();
 		}
 
+		[HttpGet]
+		public JsonResult Api(string site, long leagueId, string userId, string s2, string swid)
+		{
+			return Json(GetLeague(site, leagueId, userId, s2, swid), JsonRequestBehavior.AllowGet);
+		}
+
 
 		[HttpGet]
 		public ActionResult TestLeague(long leagueId, string s2, string swid)
