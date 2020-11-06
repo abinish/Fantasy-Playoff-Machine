@@ -38,7 +38,7 @@ export const toolPrettyName = (type: LinkType) => {
 }
 
 export const relativeUrl = (league: ILeagueMetadata, type: LinkType) => {
-    return "/Home/" + toolName(type) + "?site=" + league.site + "&leagueId=" + league.id + "&userId=" + league.userId + "&s2=" + league.s2 + "&swid=" + league.swid;
+    return "/Home/About/" + toolName(type) + "?site=" + league.site + "&leagueId=" + league.leagueId + "&userId=" + league.userId + "&s2=" + league.s2 + "&swid=" + league.swid;
 }
 
 export default function Link( {league, type}: ILinkProps) {

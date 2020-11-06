@@ -5,12 +5,12 @@ import { getLeagueDetails } from '../actions/getLeagueDetails';
 import * as queryString from 'query-string';
 import { IState } from '../rootReducer';
 import { ILeagueDetails, ILeagueMetadata } from '../models';
-import { IPowerRankingTeam } from './models';
 import leagueDetails from '../reducers/leagueDetails';
-import PowerRankingsTable from './PowerRankingsTable';
-import { getPowerRankingTeams } from './PowerRankingsHelper';
+import PlayoffMachineTable from './PlayoffMachineTable';
+import { getPowerRankingTeams } from '../selectors/getPowerRankingTeams';
+import { IPowerRankingTeam } from '../powerRankings/models';
 
-export interface IPowerRankingsStateProps {
+export interface IPlayoffMachineStateProps {
 	leagueDetails: { [id: string]: ILeagueDetails};
 	loading: boolean;
     hasError: boolean;
@@ -18,11 +18,11 @@ export interface IPowerRankingsStateProps {
 	powerRankingTeams: IPowerRankingTeam[] | null;
 }
 
-export interface IPowerRankingsDispatchProps{
+export interface IPlayoffMachineDispatchProps{
     getLeagueDetails(site: string, leagueId: string, userId: string, swid: string, s2: string): void
 }
 
-export interface IPowerRankingsUrlProps {
+export interface IPlayoffMachineUrlProps {
     site: string;
     leagueId: string;
     userId: string;
@@ -30,13 +30,13 @@ export interface IPowerRankingsUrlProps {
     s2: string;
 }
 
-type IPowerRankingsOwnProps = RouteComponentProps<IPowerRankingsUrlProps>;
+type IPlayoffMachineOwnProps = RouteComponentProps<IPlayoffMachineUrlProps>;
 
-export type IPowerRankingsProps = IPowerRankingsStateProps
-	& IPowerRankingsDispatchProps
-	& IPowerRankingsOwnProps;
+export type IPlayoffMachineProps = IPlayoffMachineStateProps
+	& IPlayoffMachineDispatchProps
+	& IPlayoffMachineOwnProps;
 
-function mapStateToProps(state: IState, ownProps: IPowerRankingsOwnProps): IPowerRankingsStateProps {
+function mapStateToProps(state: IState, ownProps: IPlayoffMachineOwnProps): IPlayoffMachineStateProps {
 	const {
 		leagueDetails: {
 			leagueDetails, loading, hasError
@@ -60,7 +60,7 @@ function mapStateToProps(state: IState, ownProps: IPowerRankingsOwnProps): IPowe
 		loading,
         hasError,
 		league,
-		powerRankingTeams: currentLeague ? getPowerRankingTeams(currentLeague) : null 
+		powerRankingTeams: null 
 	};
 }
 
@@ -68,9 +68,9 @@ const mapDispatchToProps = {
    	getLeagueDetails
 };
 
-export function PowerRankingsContainer({
+export function PlayoffMachineContainer({
 	leagueDetails, loading, hasError, getLeagueDetails, powerRankingTeams, league
-}: IPowerRankingsProps) { 
+}: IPlayoffMachineProps) { 
 	//const history = useHistory();
 	// const listUrl = React.useMemo(() => pathname.substring(0, pathname.lastIndexOf('/')), [pathname]);
 	// const initAreaId = React.useMemo(() => {
@@ -90,12 +90,12 @@ export function PowerRankingsContainer({
 	// } else if (hasError) {
 	// 	return <ErrorView />;
 	// }
-	return <PowerRankingsTable Teams={powerRankingTeams} />;
+	return <PlayoffMachineTable Teams={powerRankingTeams} />;
 }
 
 export default connect<
-    IPowerRankingsStateProps,
-	IPowerRankingsDispatchProps,
-	IPowerRankingsOwnProps,
+    IPlayoffMachineStateProps,
+	IPlayoffMachineDispatchProps,
+	IPlayoffMachineOwnProps,
 	IState
->(mapStateToProps, mapDispatchToProps)(PowerRankingsContainer);
+>(mapStateToProps, mapDispatchToProps)(PlayoffMachineContainer);

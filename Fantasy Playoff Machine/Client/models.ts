@@ -63,7 +63,7 @@ export enum PlayoffTiebreakerID {
 
 export interface ILeagueMetadata {
     site: string;
-    id: string;
+    leagueId: string;
     name: string;
     userId: string;
     swid: string;

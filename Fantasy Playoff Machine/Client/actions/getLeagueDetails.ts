@@ -10,25 +10,28 @@ export type GetLeagueDetailsFailure = IAction<'GET_LEAGUE_DETAILS_FAILURE', void
 
 export function getLeagueDetails(site: string, leagueId: string, userId: string, swid: string, s2: string) {
 	return async (dispatch: Dispatch<AnyAction>, getState: () => IState) => {
-		console.log('here')
-		dispatch(getLeagueRequest());
+		const {  leagueDetails: { leagueDetails } } = getState();
+		
+		if(leagueDetails[site + leagueId] != null)
+			return;
+		dispatch(getLeagueDetailsRequest());
 		try {
 			const league = await LeagueApi.getLeagueDetails({ site, leagueId, userId, swid, s2 });
-			dispatch(getLeagueSucess(league, site+leagueId));
+			dispatch(getLeagueDetailsSucess(league, site+leagueId));
 		} catch {
-			dispatch(getLeagueFailure());
+			dispatch(getLeagueDetailsFailure());
 		}
 	};
 }
 
-function getLeagueRequest(): GetLeagueDetailsRequest {
+function getLeagueDetailsRequest(): GetLeagueDetailsRequest {
 	return { type: 'GET_LEAGUE_DETAILS_REQUEST', payload: void 0 };
 }
 
-function getLeagueSucess(League: ILeagueDetails, key: string): GetLeagueDetailsSuccess {
+function getLeagueDetailsSucess(League: ILeagueDetails, key: string): GetLeagueDetailsSuccess {
 	return { type: 'GET_LEAGUE_DETAILS_SUCCESS', payload: { League, key } };
 }
 
-function getLeagueFailure(): GetLeagueDetailsFailure {
+function getLeagueDetailsFailure(): GetLeagueDetailsFailure {
 	return { type: 'GET_LEAGUE_DETAILS_FAILURE', payload: void 0 };
 }

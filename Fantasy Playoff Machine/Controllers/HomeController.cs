@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using RestSharp;
 using System.Web.Mvc;
 using Fantasy_Playoff_Machine.Models;
 using Fantasy_Playoff_Machine.Logic;
 using System.Xml.Linq;
+using Fantasy_Playoff_Machine.Attributes;
 
 namespace Fantasy_Playoff_Machine.Controllers
 {
@@ -201,10 +203,48 @@ namespace Fantasy_Playoff_Machine.Controllers
 			return View();
 		}
 
+		[JsonCamelCase]
 		[HttpGet]
 		public JsonResult Api(string site, long leagueId, string userId, string s2, string swid)
 		{
 			return Json(GetLeague(site, leagueId, userId, s2, swid), JsonRequestBehavior.AllowGet);
+		}
+
+		[JsonCamelCase]
+		[HttpGet]
+		public JsonResult LeagueMetadata()
+		{
+			var leagues = new List<LeagueMetadata>
+			{
+				new LeagueMetadata
+				{
+					Site = "espn",
+					LeagueId = "975549",
+					Name = "Wrestlers League",
+					S2 = "",
+					Swid = "",
+					UserId = ""
+				},
+				new LeagueMetadata
+				{
+					Site = "espn",
+					LeagueId = "1241838",
+					Name = "Keeper League",
+					S2 = "",
+					Swid = "",
+					UserId = ""
+				},
+				new LeagueMetadata
+				{
+					Site = "sleeper",
+					LeagueId = "515554601623953408",
+					Name = "Franchise League",
+					S2 = "",
+					Swid = "",
+					UserId = ""
+				}
+			};
+			return Json(leagues, JsonRequestBehavior.AllowGet);
 		}
 
 

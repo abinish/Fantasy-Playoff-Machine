@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux';
 import leagueDetails, { ILeagueDetailsState } from './reducers/leagueDetails';
-import leagues, { ILeagueMetadataState } from './reducers/leagueMetadata';
+import leagues, { ILeaguesState } from './reducers/leagues';
 
 export interface IState {
     leagueDetails: ILeagueDetailsState;
-    leagues: ILeagueMetadataState
+    leagues: ILeaguesState
 }
 
 export default combineReducers({

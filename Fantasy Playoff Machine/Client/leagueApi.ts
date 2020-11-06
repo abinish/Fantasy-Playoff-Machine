@@ -1,4 +1,22 @@
-import { ILeagueDetails } from './models'
+import { ILeagueDetails, ILeagueMetadata } from './models'
+
+export async function verifyLeagueExists( parameters: {
+    site: string,
+    leagueId: string,
+    userId: string,
+    swid: string,
+    s2: string
+}) {
+    const response = await fetch(`https://www.theffhub.com/Home/VerifyLeagueExists?site=${parameters.site}&leagueId=${parameters.leagueId}&userId=${parameters.userId}&swid=${parameters.swid}&s2=${parameters.s2}`)
+    checkStatus(response);
+    return await response.json() as boolean;
+}
+
+export async function getLeagues() {
+    const response = await fetch(`https://localhost:44313/Home/leagueMetadata`)
+    checkStatus(response);
+    return await response.json() as [ILeagueMetadata];
+}
 
 export async function getLeagueDetails( parameters: {
     site: string,
@@ -7,7 +25,7 @@ export async function getLeagueDetails( parameters: {
     swid: string,
     s2: string
 }) {
-    const response = await fetch(`https://www.theffhub.com/Home/api?site=${parameters.site}&leagueId=${parameters.leagueId}&userId=${parameters.userId}&swid=${parameters.swid}&s2=${parameters.s2}`)
+    const response = await fetch(`https://localhost:44313/Home/api?site=${parameters.site}&leagueId=${parameters.leagueId}&userId=${parameters.userId}&swid=${parameters.swid}&s2=${parameters.s2}`)
     checkStatus(response);
     return await response.json() as ILeagueDetails;
 }
