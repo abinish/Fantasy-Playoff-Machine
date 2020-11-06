@@ -77,6 +77,8 @@ namespace Fantasy_Playoff_Machine.Logic
 
 			var teamsResult = GetSleeperEndpoint(leagueId, "/rosters");
 
+			var maxGamesPlayed = 0;
+
 			foreach (var team in teamsResult)
 			{
 				//For some reason it can come back with a null roster?
@@ -105,7 +107,12 @@ namespace Fantasy_Playoff_Machine.Logic
 					PointsFor = team.settings.fpts ?? 0 + (((decimal)(team.settings.fpts_decimal ?? 0))/100),
 					PointsAgainst = team.settings.fpts_against ?? 0 + (((decimal)(team.settings.fpts_against_decimal ?? 0)) / 100)
 				};
-				
+
+				if (espnTeam.Wins + espnTeam.Losses + espnTeam.Ties > maxGamesPlayed)
+				{
+					maxGamesPlayed = espnTeam.Wins + espnTeam.Losses + espnTeam.Ties;
+				}
+
 				allTeams.Add(espnTeam);
 				division.Teams.Add(espnTeam);
 			}
@@ -115,16 +122,19 @@ namespace Fantasy_Playoff_Machine.Logic
 				var matchups = GetSleeperEndpoint(leagueId, "/matchups/" + i);
 				var matchupDictionary = new Dictionary<long, EspnMatchupItem>();
 				var weekCompleted = false;
-				foreach (var matchup in matchups)
+				if (i <= maxGamesPlayed)
 				{
-					if (matchup.points.Value != 0.0)
+					foreach (var matchup in matchups)
 					{
-						weekCompleted = true;
-						break;
+						if (matchup.points.Value != 0.0)
+						{
+							weekCompleted = true;
+							break;
+						}
 					}
 				}
 
-					foreach (var teamMatchup in matchups)
+				foreach (var teamMatchup in matchups)
 				{
 					//Apparently sleeper allows for teams to be returned that aren't real teams.
 					var matchupMatchesTeam = allTeams.FirstOrDefault(_ => _.ID == teamMatchup.roster_id.Value);
