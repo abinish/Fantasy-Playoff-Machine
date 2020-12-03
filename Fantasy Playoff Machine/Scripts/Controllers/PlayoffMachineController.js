@@ -132,15 +132,17 @@
 
 						orderedTeams.push(topTeam);
 					}
+					if (topTeams.length > 0) {
+						var temp = topTeams.shift();
 
-					var temp = topTeams.shift();
 
-					////Remove from teams
-					var index = sortedTeams.indexOf(temp);
-					if (index > -1)
-						sortedTeams.splice(index, 1);
+						////Remove from teams
+						var index = sortedTeams.indexOf(temp);
+						if (index > -1)
+							sortedTeams.splice(index, 1);
 
-					orderedTeams.push(temp);
+						orderedTeams.push(temp);
+					}
 				}
 				return orderedTeams;
 			};
@@ -366,23 +368,39 @@
 					});
 
 
-					teams = _.filter(teams, function (remainingTeam) {
+					remainingTeams = _.filter(teams, function (remainingTeam) {
 						return _.some(teamsWithMatchingWinPercentage, function (matchingWinPercentageTeam) {
 							return matchingWinPercentageTeam.Team.TeamName === remainingTeam.TeamName;
 						});
 					});
 
-					var remainingTeams = _.map(teams, function (team) {
+					var remainingTeamNames = _.map(teams, function (team) {
 						return team.TeamName;
 					})
 
 					var remainingText = "";
-					//If there are multiple teams remaining and not all are moving on we have to restart the tiebreaking with the remaining teams
-					if (totalTeams > 2 && totalTeams !== teams.length) {
-						remainingText = " Teams remaining: " + remainingTeams.join(', ') + ". Remaining teams will restart the tiebreaking process";
+					//If there are multiple teams remaining and not all are moving on we have to move onto the next tiebreaker with the remaining teams.  This is almost always points for (since 99% of rules are points for first or H2H first and we almost never get here with points for first)
+					if (totalTeams > 2 && totalTeams !== remainingTeams.length) {
+						remainingText = " Teams remaining: " + remainingTeamNames.join(', ') + ". Remaining teams will move to next tiebreaker";
 						tiebreaker.Messages.push("Head to head tiebreaker could not break the tie because multiple teams have the same head to head record." + remainingText);
 
-						return $scope.determineTieBreakersWinner(teams, site, tiebreaker);
+						var winningTeam = $scope.pointsForTiebreaker(teams, tiebreaker);
+						if (winningTeam) {
+							var teamsThatLost = _.filter(teams,
+								function(team) {
+									return team.TeamName !== winningTeam.TeamName;
+								});
+
+							_.each(teamsThatLost, function (team) {
+								var index = _.findIndex(teams, function (eachTeam) {
+									return eachTeam.TeamName == team.TeamName;
+								});
+								if (index > -1)
+									teams.splice(index, 1);
+
+							});
+						}
+						return winningTeam;
 					}
 
 
