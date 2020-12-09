@@ -36,8 +36,17 @@ namespace Fantasy_Playoff_Machine.Logic
 			finalSettings.PlayoffTiebreakerID = 1; //Points for
 			finalSettings.RegularSeasonWeeks = settings.playoff_week_start -1;
 
+			var divisionsListed = false;
+			if (result.metadata != null)
+			{
+				var value = result.metadata["division_1"];
+				if (value != null)
+				{
+					divisionsListed = true;
+				}	
+			}
 			//Create divisions
-			if (result.metadata == null)
+			if (!divisionsListed)
 			{
 				finalSettings.Divisions.Add(new EspnDivision { Name = finalSettings.LeagueName, ID = 1, Teams = new List<EspnTeam>() });
 			}
